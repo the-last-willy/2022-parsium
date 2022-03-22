@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
-project(parser_gen)
+project(parsium_private)
+
+add_compile_options(-Wall)
 
 ################################################################################
 
@@ -35,5 +37,5 @@ target_link_libraries(sandbox_fsm
 
 target_sources(sandbox_fsm
     PRIVATE
-        src/sandbox/fsm/main.cpp
+        src/sandbox/fsm/generated.cpp
 )
