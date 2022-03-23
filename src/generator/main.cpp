@@ -104,23 +104,16 @@ void generate(const DFSM_Model<DFSM_Traits...>& dfsm, std::ostream& os) {
 		os << "\t\tchar c = is.peek();\n";
 		os << "\t\tis.advance();\n";
 
-		for(auto c : dfsm.alphabet.symbols) {
-			for(Transition& t : dfsm.transition_function.transitions) {
-				if(t.current_state == i) {
-					if(std::holds_alternative<EqualCondition>(t.condition)) {
-						os << "\t\tif(" << std::get<EqualCondition>(t.condition).print("c") << ") {\n";
-					} else if(std::holds_alternative<RangeCondition>(t.condition)) {
-						os << "\t\tif(" << std::get<RangeCondition>(t.condition).print("c") << ") {\n";
-					}
+		for(const auto& t : dfsm.transition_function.transitions) {
+			if(t.current_state == i) {
+				if(std::holds_alternative<EqualCondition>(t.condition)) {
+					os << "\t\tif(" << std::get<EqualCondition>(t.condition).print("c") << ") {\n";
+				} else if(std::holds_alternative<RangeCondition>(t.condition)) {
+					os << "\t\tif(" << std::get<RangeCondition>(t.condition).print("c") << ") {\n";
 				}
-					os << "\t\t\treturn state_" << dfsm.transition_function(i, c) << "_is_accepted(is);\n";
-					os << "\t\t}\n";
-				}
+				os << "\t\t\treturn state_" << t.next_state << "_is_accepted(is);\n";
+				os << "\t\t}\n";
 			}
-//			auto t = dfsm.transition_function(i, c);
-			if(t != std::size_t(-1)) {
-
-//			}
 		}
 		os << "\t\treturn false;\n";
 
