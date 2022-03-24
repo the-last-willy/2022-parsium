@@ -27,5 +27,12 @@ private:
 	const char* last;
 };
 
+inline
+char get(InputStream& is) {
+	auto c = is.peek();
+	is.advance();
+	return c;
+}
+
 }
 }
