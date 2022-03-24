@@ -1,3 +1,5 @@
+#include "unary_predicates.hpp"
+
 #include <algorithm>
 #include <array>
 #include <filesystem>
@@ -7,50 +9,18 @@
 #include <variant>
 #include <vector>
 
+using namespace parsium;
+
 enum class FSM_Unspecified {
 	bin,
 	ignore,
-};
-
-struct Condition {
-	virtual bool evaluate(char c) const = 0;
-	virtual std::string print(const std::string& symbol) const = 0;
-};
-
-struct EqualCondition : public Condition {
-	char value;
-
-	EqualCondition(char c)
-	: value(c)
-	{}
-
-	bool evaluate(char symbol) const override {
-		return symbol == value;
-	}
-
-	std::string print(const std::string& symbol) const override {
-		return symbol + " == " + std::to_string(value);
-	}
-};
-
-struct RangeCondition : public Condition {
-	char lower_bound;
-	char upper_bound;
-
-	bool evaluate(char symbol) const override {
-		return symbol >= lower_bound and symbol <= upper_bound;
-	}
-
-	std::string print(const std::string& symbol) const override {
-		return symbol + " >= " + std::to_string(lower_bound) + " && " + symbol + " >= " + std::to_string(upper_bound);
-	}
 };
 
 struct Transition {
 	std::size_t current_state;
 	std::size_t next_state;
 
-	std::variant<EqualCondition, RangeCondition> condition;
+	std::variant<EqualUnaryPredicate, RangeUnaryPredicate> condition;
 };
 
 struct TransitionSet {
@@ -101,15 +71,14 @@ void generate(const DFSM_Model<DFSM_Traits...>& dfsm, std::ostream& os) {
 	for(std::size_t i = 0; i < dfsm.state_count; ++i) {
 		os << "bool state_" << i << "_is_accepted(InputStream& is) {\n";
 		os << "\tif(!is.is_done()) {\n";
-		os << "\t\tchar c = is.peek();\n";
-		os << "\t\tis.advance();\n";
+		os << "\t\tchar c = get(is);\n";
 
 		for(const auto& t : dfsm.transition_function.transitions) {
 			if(t.current_state == i) {
-				if(std::holds_alternative<EqualCondition>(t.condition)) {
-					os << "\t\tif(" << std::get<EqualCondition>(t.condition).print("c") << ") {\n";
-				} else if(std::holds_alternative<RangeCondition>(t.condition)) {
-					os << "\t\tif(" << std::get<RangeCondition>(t.condition).print("c") << ") {\n";
+				if(std::holds_alternative<EqualUnaryPredicate>(t.condition)) {
+					os << "\t\tif(" << std::get<EqualUnaryPredicate>(t.condition).text("c") << ") {\n";
+				} else if(std::holds_alternative<RangeUnaryPredicate>(t.condition)) {
+					os << "\t\tif(" << std::get<RangeUnaryPredicate>(t.condition).text("c") << ") {\n";
 				}
 				os << "\t\t\treturn state_" << t.next_state << "_is_accepted(is);\n";
 				os << "\t\t}\n";
@@ -146,15 +115,15 @@ std::size_t even_number_of_a_transition(std::size_t s, char c) {
 TransitionSet even_a_even_b_even_c() {
 	auto transition_set = TransitionSet();
 
-	transition_set.transitions.emplace_back(Transition{0, 1, EqualCondition('a')});
-	transition_set.transitions.emplace_back(Transition{0, 3, EqualCondition('b')});
-	transition_set.transitions.emplace_back(Transition{0, 5, EqualCondition('c')});
-	transition_set.transitions.emplace_back(Transition{1, 0, EqualCondition('a')});
-	transition_set.transitions.emplace_back(Transition{2, 3, EqualCondition('b')});
-	transition_set.transitions.emplace_back(Transition{2, 5, EqualCondition('c')});
-	transition_set.transitions.emplace_back(Transition{3, 2, EqualCondition('b')});
-	transition_set.transitions.emplace_back(Transition{4, 5, EqualCondition('c')});
-	transition_set.transitions.emplace_back(Transition{5, 4, EqualCondition('c')});
+	transition_set.transitions.emplace_back(Transition{0, 1, EqualUnaryPredicate('a')});
+	transition_set.transitions.emplace_back(Transition{0, 3, EqualUnaryPredicate('b')});
+	transition_set.transitions.emplace_back(Transition{0, 5, EqualUnaryPredicate('c')});
+	transition_set.transitions.emplace_back(Transition{1, 0, EqualUnaryPredicate('a')});
+	transition_set.transitions.emplace_back(Transition{2, 3, EqualUnaryPredicate('b')});
+	transition_set.transitions.emplace_back(Transition{2, 5, EqualUnaryPredicate('c')});
+	transition_set.transitions.emplace_back(Transition{3, 2, EqualUnaryPredicate('b')});
+	transition_set.transitions.emplace_back(Transition{4, 5, EqualUnaryPredicate('c')});
+	transition_set.transitions.emplace_back(Transition{5, 4, EqualUnaryPredicate('c')});
 
 	return transition_set;
 
