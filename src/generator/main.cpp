@@ -20,7 +20,7 @@ struct Transition {
 	std::size_t current_state;
 	std::size_t next_state;
 
-	std::variant<EqualUnaryPredicate, RangeUnaryPredicate> condition;
+	std::unique_ptr<UnaryPredicate> condition;
 };
 
 struct TransitionSet {
@@ -75,11 +75,7 @@ void generate(const DFSM_Model<DFSM_Traits...>& dfsm, std::ostream& os) {
 
 		for(const auto& t : dfsm.transition_function.transitions) {
 			if(t.current_state == i) {
-				if(std::holds_alternative<EqualUnaryPredicate>(t.condition)) {
-					os << "\t\tif(" << std::get<EqualUnaryPredicate>(t.condition).text("c") << ") {\n";
-				} else if(std::holds_alternative<RangeUnaryPredicate>(t.condition)) {
-					os << "\t\tif(" << std::get<RangeUnaryPredicate>(t.condition).text("c") << ") {\n";
-				}
+				os << "\t\tif(" << t.condition->text("c") << ") {\n";
 				os << "\t\t\treturn state_" << t.next_state << "_is_accepted(is);\n";
 				os << "\t\t}\n";
 			}
@@ -115,15 +111,15 @@ std::size_t even_number_of_a_transition(std::size_t s, char c) {
 TransitionSet even_a_even_b_even_c() {
 	auto transition_set = TransitionSet();
 
-	transition_set.transitions.emplace_back(Transition{0, 1, EqualUnaryPredicate('a')});
-	transition_set.transitions.emplace_back(Transition{0, 3, EqualUnaryPredicate('b')});
-	transition_set.transitions.emplace_back(Transition{0, 5, EqualUnaryPredicate('c')});
-	transition_set.transitions.emplace_back(Transition{1, 0, EqualUnaryPredicate('a')});
-	transition_set.transitions.emplace_back(Transition{2, 3, EqualUnaryPredicate('b')});
-	transition_set.transitions.emplace_back(Transition{2, 5, EqualUnaryPredicate('c')});
-	transition_set.transitions.emplace_back(Transition{3, 2, EqualUnaryPredicate('b')});
-	transition_set.transitions.emplace_back(Transition{4, 5, EqualUnaryPredicate('c')});
-	transition_set.transitions.emplace_back(Transition{5, 4, EqualUnaryPredicate('c')});
+	transition_set.transitions.emplace_back(Transition{0, 1, std::make_unique<EqualUnaryPredicate>('a')});
+	transition_set.transitions.emplace_back(Transition{0, 3, std::make_unique<EqualUnaryPredicate>('b')});
+	transition_set.transitions.emplace_back(Transition{0, 5, std::make_unique<EqualUnaryPredicate>('c')});
+	transition_set.transitions.emplace_back(Transition{1, 0, std::make_unique<EqualUnaryPredicate>('a')});
+	transition_set.transitions.emplace_back(Transition{2, 3, std::make_unique<EqualUnaryPredicate>('b')});
+	transition_set.transitions.emplace_back(Transition{2, 5, std::make_unique<EqualUnaryPredicate>('c')});
+	transition_set.transitions.emplace_back(Transition{3, 2, std::make_unique<EqualUnaryPredicate>('b')});
+	transition_set.transitions.emplace_back(Transition{4, 5, std::make_unique<EqualUnaryPredicate>('c')});
+	transition_set.transitions.emplace_back(Transition{5, 4, std::make_unique<EqualUnaryPredicate>('c')});
 
 	return transition_set;
 
