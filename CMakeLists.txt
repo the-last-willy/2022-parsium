@@ -39,3 +39,17 @@ target_sources(sandbox_fsm
     PRIVATE
         src/sandbox/fsm/generated.cpp
 )
+
+################################################################################
+
+add_executable(sandbox_json)
+
+target_link_libraries(sandbox_json
+    PUBLIC
+        common_libraries
+)
+
+target_sources(sandbox_json
+    PRIVATE
+        src/sandbox/json/main.cpp
+)
