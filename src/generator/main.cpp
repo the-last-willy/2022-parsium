@@ -1,4 +1,7 @@
-#include "unary_predicates.hpp"
+#include "generator/automaton/automaton.hpp"
+#include "generator/state/state.hpp"
+#include "generator/transition/transition.hpp"
+#include "generator/unary_predicates.hpp"
 
 #include <algorithm>
 #include <array>
@@ -6,48 +9,10 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include <variant>
 #include <vector>
 
 using namespace parsium;
 
-enum class FSM_Unspecified {
-	bin,
-	ignore,
-};
-
-struct Transition {
-	std::size_t current_state;
-	std::size_t next_state;
-
-	std::unique_ptr<UnaryPredicate> condition;
-};
-
-struct TransitionSet {
-	FSM_Unspecified unspecified_behaviour = FSM_Unspecified::bin;
-
-	std::vector<Transition> transitions;
-};
-
-struct CharAlphabet {
-	std::vector<char> symbols;
-};
-
-template<
-    typename Alphabet,
-	typename State,
-	typename TransitionFunction>
-struct DFSM_Model {
-	Alphabet alphabet;
-	std::size_t state_count;
-	State initial_state;
-	TransitionFunction transition_function;
-	std::vector<State> final_states;
-};
-
-struct FSM {
-
-};
 
 template<typename... DFSM_Traits>
 void generate(const DFSM_Model<DFSM_Traits...>& dfsm, std::ostream& os) {
