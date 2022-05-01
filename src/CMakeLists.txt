@@ -34,3 +34,4 @@ target_sources(sandbox_fsm
 ################################################################################
 
 add_subdirectory(sandbox/json)
+add_subdirectory(sandbox/json2)

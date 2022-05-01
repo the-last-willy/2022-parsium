@@ -314,6 +314,29 @@ TestSet onenine_test_set() {
 	return test_set;
 }
 
+TestSet sign_test_set() {
+	auto test_set = TestSet();
+	test_set.name = "JSON/sign";
+	test_set.tests = std::vector<Test>{
+		Test{
+			.input = "",
+			.is_accepted = true,
+			.read_count = 0},
+		Test{
+			.input = "a",
+			.is_accepted = true,
+			.read_count = 0},
+		Test{
+			.input = "+",
+			.is_accepted = true,
+			.read_count = 1},
+		Test{
+			.input = "-",
+			.is_accepted = true,
+			.read_count = 1}};
+	return test_set;
+}
+
 TestSet string_test_set() {
 	auto test_set = TestSet();
 	test_set.name = "JSON/string";
