@@ -73,7 +73,7 @@ parsium::mckeeman::Grammar json_format() {
 			alternative.items.emplace_back(digit);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(range('A', 'F'));
+			alternative.items.emplace_back(literal(range('A', 'F')));
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
 			alternative.items.emplace_back(range('a', 'f'));
