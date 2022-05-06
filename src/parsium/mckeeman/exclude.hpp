@@ -9,10 +9,20 @@ namespace parsium {
 namespace mckeeman {
 
 struct Exclude {
+	// A range can also define a single codepoint.
+	// Would be better than to have both a codepoint and a range.
 	std::variant<char, Range> excluded_characters;
+
+	// That's a linked list. Should be done outside Exclude.
 	std::unique_ptr<Exclude> next;
 };
 
+inline
+Exclude exclude(char c) {
+	return Exclude({c});
+}
+
+inline
 bool does_accept(const Exclude& e, char c) {
 	const Exclude* current_exclude = &e;
 	do {
@@ -30,6 +40,15 @@ bool does_accept(const Exclude& e, char c) {
 		}
 	} while(current_exclude);
 	return true;
+}
+
+inline
+Exclude& last_exclude(Exclude& e) {
+	auto current = &e;
+	while(current->next) {
+		current = current->next.get();
+	}
+	return *current;
 }
 
 }
