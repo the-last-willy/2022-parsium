@@ -29,5 +29,20 @@ bool does_accept(const RangeExclude& re, char c) {
 	return does_accept(r, c) and (not e or does_accept(*e, c));
 }
 
+inline
+RangeExclude operator-(Range r, Exclude e) {
+	return range_exclude(std::move(r), std::move(e));
+}
+
+inline
+RangeExclude operator-(RangeExclude re, Exclude e) {
+	if(re.exclude) {
+		last_exclude(*re.exclude).next = std::make_unique<Exclude>(std::move(e));
+	} else {
+		re.exclude = std::move(e);
+	}
+	return re;
+}
+
 }
 }
