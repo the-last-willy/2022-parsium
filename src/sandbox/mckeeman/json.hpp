@@ -4,9 +4,9 @@
 
 parsium::mckeeman::Grammar json_format() {
 	using namespace parsium::mckeeman;
-	
+
 	auto grammar =  parsium::mckeeman::Grammar();
-	
+
 	auto& json = grammar.rules.emplace_back(rule("json"));
 	auto& value = grammar.rules.emplace_back(rule("value"));
 	auto& object = grammar.rules.emplace_back(rule("object"));
@@ -31,7 +31,125 @@ parsium::mckeeman::Grammar json_format() {
 	auto& ws = grammar.rules.emplace_back(rule("ws"));
 
 	{
+		auto& rule = json;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(element);
+		}
+	} {
+		auto& rule = value;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(object);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(array);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(string);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(number);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back("true");
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back("false");
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back("null");
+		}
+	} {
+		auto& rule = object;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back('{');
+			alternative.items.emplace_back(ws);
+			alternative.items.emplace_back('}');
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back('{');
+			alternative.items.emplace_back(members);
+			alternative.items.emplace_back('}');
+		}
+	} {
+		auto& rule = members;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(member);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(member);
+			alternative.items.emplace_back(',');
+			alternative.items.emplace_back(members);
+		}
+	} {
+		auto& rule = member;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(ws);
+			alternative.items.emplace_back(string);
+			alternative.items.emplace_back(ws);
+			alternative.items.emplace_back(':');
+			alternative.items.emplace_back(element);
+		}
+	} {
+		auto& rule = array;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back('[');
+			alternative.items.emplace_back(ws);
+			alternative.items.emplace_back(']');
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back('[');
+			alternative.items.emplace_back(elements);
+			alternative.items.emplace_back(']');
+		}
+	} {
+		auto& rule = elements;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(element);
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(element);
+			alternative.items.emplace_back(',');
+			alternative.items.emplace_back(elements);
+		}
+	} {
+		auto& rule = element;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(ws);
+			alternative.items.emplace_back(value);
+			alternative.items.emplace_back(ws);
+		}
+	} {
+		auto& rule = string;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back('"');
+			alternative.items.emplace_back(characters);
+			alternative.items.emplace_back('"');
+		}
+	} {
+		auto& rule = characters;
+		rule.does_accept_nothing = true;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(character);
+			alternative.items.emplace_back(characters);
+		}
+	} {
 		auto& rule = character;
+		{
+			auto& alternative = rule.alternatives.emplace_back();
+			alternative.items.emplace_back(range(' ', 255) - exclude('"') - exclude('\\'));
+			alternative.items.emplace_back('\\');
+			alternative.items.emplace_back(escape);
+		}
 	} {
 		auto& rule = escape;
 		{
