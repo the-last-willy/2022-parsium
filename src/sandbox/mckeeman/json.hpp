@@ -6,29 +6,30 @@ parsium::mckeeman::Grammar json_format() {
 	using namespace parsium::mckeeman;
 
 	auto grammar =  parsium::mckeeman::Grammar();
+	grammar.rules.reserve(22);
 
-	auto& json = grammar.rules.emplace_back(rule("json"));
-	auto& value = grammar.rules.emplace_back(rule("value"));
-	auto& object = grammar.rules.emplace_back(rule("object"));
-	auto& members = grammar.rules.emplace_back(rule("members"));
-	auto& member = grammar.rules.emplace_back(rule("member"));
-	auto& array = grammar.rules.emplace_back(rule("array"));
-	auto& elements = grammar.rules.emplace_back(rule("elements"));
-	auto& element = grammar.rules.emplace_back(rule("element"));
-	auto& string = grammar.rules.emplace_back(rule("string"));
-	auto& characters = grammar.rules.emplace_back(rule("characters"));
-	auto& character = grammar.rules.emplace_back(rule("character"));
-	auto& escape = grammar.rules.emplace_back(rule("escape"));
-	auto& hex = grammar.rules.emplace_back(rule("hex"));
-	auto& number = grammar.rules.emplace_back(rule("number"));
-	auto& integer = grammar.rules.emplace_back(rule("integer"));
-	auto& digits = grammar.rules.emplace_back(rule("digits"));
-	auto& digit = grammar.rules.emplace_back(rule("digit"));
-	auto& onenine = grammar.rules.emplace_back(rule("onenine"));
-	auto& fraction = grammar.rules.emplace_back(rule("fraction"));
-	auto& exponent = grammar.rules.emplace_back(rule("exponent"));
-	auto& sign = grammar.rules.emplace_back(rule("sign"));
-	auto& ws = grammar.rules.emplace_back(rule("ws"));
+	auto& json = grammar.rules.emplace_back("json");
+	auto& value = grammar.rules.emplace_back("value");
+	auto& object = grammar.rules.emplace_back("object");
+	auto& members = grammar.rules.emplace_back("members");
+	auto& member = grammar.rules.emplace_back("member");
+	auto& array = grammar.rules.emplace_back("array");
+	auto& elements = grammar.rules.emplace_back("elements");
+	auto& element = grammar.rules.emplace_back("element");
+	auto& string = grammar.rules.emplace_back("string");
+	auto& characters = grammar.rules.emplace_back("characters");
+	auto& character = grammar.rules.emplace_back("character");
+	auto& escape = grammar.rules.emplace_back("escape");
+	auto& hex = grammar.rules.emplace_back("hex");
+	auto& number = grammar.rules.emplace_back("number");
+	auto& integer = grammar.rules.emplace_back("integer");
+	auto& digits = grammar.rules.emplace_back("digits");
+	auto& digit = grammar.rules.emplace_back("digit");
+	auto& onenine = grammar.rules.emplace_back("onenine");
+	auto& fraction = grammar.rules.emplace_back("fraction");
+	auto& exponent = grammar.rules.emplace_back("exponent");
+	auto& sign = grammar.rules.emplace_back("sign");
+	auto& ws = grammar.rules.emplace_back("ws");
 
 	{
 		auto& rule = json;
@@ -146,7 +147,7 @@ parsium::mckeeman::Grammar json_format() {
 		auto& rule = character;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(range(' ', 255) - exclude('"') - exclude('\\'));
+			alternative.items.emplace_back(range(' ', 127) - exclude('"') - exclude('\\'));
 			alternative.items.emplace_back('\\');
 			alternative.items.emplace_back(escape);
 		}
@@ -154,31 +155,31 @@ parsium::mckeeman::Grammar json_format() {
 		auto& rule = escape;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('"'));
+			alternative.items.emplace_back('"');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('\\'));
+			alternative.items.emplace_back('\\');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('/'));
+			alternative.items.emplace_back('/');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('b'));
+			alternative.items.emplace_back('b');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('f'));
+			alternative.items.emplace_back('f');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('n'));
+			alternative.items.emplace_back('n');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('r'));
+			alternative.items.emplace_back('r');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('t'));
+			alternative.items.emplace_back('t');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('u'));
+			alternative.items.emplace_back('u');
 			alternative.items.emplace_back(hex);
 			alternative.items.emplace_back(hex);
 			alternative.items.emplace_back(hex);
@@ -191,7 +192,7 @@ parsium::mckeeman::Grammar json_format() {
 			alternative.items.emplace_back(digit);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(literal(range('A', 'F')));
+			alternative.items.emplace_back(range('A', 'F'));
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
 			alternative.items.emplace_back(range('a', 'f'));
@@ -215,11 +216,11 @@ parsium::mckeeman::Grammar json_format() {
 			alternative.items.emplace_back(digits);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('-'));
+			alternative.items.emplace_back('-');
 			alternative.items.emplace_back(digit);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('-'));
+			alternative.items.emplace_back('-');
 			alternative.items.emplace_back(onenine);
 			alternative.items.emplace_back(digits);
 		}
@@ -237,7 +238,7 @@ parsium::mckeeman::Grammar json_format() {
 		auto& rule = digit;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('0'));
+			alternative.items.emplace_back('0');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
 			alternative.items.emplace_back(onenine);
@@ -253,7 +254,7 @@ parsium::mckeeman::Grammar json_format() {
 		rule.does_accept_nothing = true;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('.'));
+			alternative.items.emplace_back('.');
 			alternative.items.emplace_back(digits);
 		}
 	} {
@@ -261,12 +262,12 @@ parsium::mckeeman::Grammar json_format() {
 		rule.does_accept_nothing = true;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('E'));
+			alternative.items.emplace_back('E');
 			alternative.items.emplace_back(sign);
 			alternative.items.emplace_back(digits);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('e'));
+			alternative.items.emplace_back('e');
 			alternative.items.emplace_back(sign);
 			alternative.items.emplace_back(digits);
 		}
@@ -275,29 +276,29 @@ parsium::mckeeman::Grammar json_format() {
 		rule.does_accept_nothing = true;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('+'));
+			alternative.items.emplace_back('+');
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal('-'));
+			alternative.items.emplace_back('-');
 		}
 	} {
 		auto& rule = ws;
 		rule.does_accept_nothing = true;
 		{
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal(0x20));
+			alternative.items.emplace_back(char(0x20));
 			alternative.items.emplace_back(ws);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal(0x0A));
+			alternative.items.emplace_back(char(0x0A));
 			alternative.items.emplace_back(ws);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal(0x0D));
+			alternative.items.emplace_back(char(0x0D));
 			alternative.items.emplace_back(ws);
 		} {
 			auto& alternative = rule.alternatives.emplace_back();
-			alternative.items.emplace_back(singleton_literal(0x09));
+			alternative.items.emplace_back(char(0x09));
 			alternative.items.emplace_back(ws);
 		}
 	}
