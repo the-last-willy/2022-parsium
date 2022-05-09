@@ -1,5 +1,6 @@
 #pragma once
 
+#include "name.hpp"
 #include "range_exclude.hpp"
 
 #include <memory>
@@ -11,8 +12,28 @@ namespace parsium {
 namespace mckeeman {
 
 struct Literal {
+	// Fuse char and range exclude together.
 	std::variant<char, RangeExclude, std::string> content;
 };
+
+// Accessing.
+
+inline
+const std::string* optional_characters(const Literal& l) {
+	return std::get_if<std::string>(&l.content);
+}
+
+inline
+const RangeExclude* optional_range_exclude(const Literal& l) {
+	return std::get_if<RangeExclude>(&l.content);
+}
+
+inline
+const char* optional_singleton(const Literal& l) {
+	return std::get_if<char>(&l.content);
+}
+
+// --
 
 inline
 bool does_accept(char codepoint, char c) {

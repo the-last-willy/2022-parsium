@@ -15,6 +15,11 @@ struct Rule {
 
 	Rule() = default;
 
+	explicit
+	Rule(std::string s)
+	: name(std::move(s))
+	{}
+
 	operator const Name&() const noexcept {
 		return name;
 	}
