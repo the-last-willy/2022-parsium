@@ -1,8 +1,8 @@
 
-add_library(parsium_sandbox_mckeeman)
+add_executable(parsium_sandbox_mckeeman)
 
 target_link_libraries(parsium_sandbox_mckeeman
-	PUBLIC
+	PRIVATE
 	common_libraries
 	)
 
