@@ -6,9 +6,9 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 find_package(Catch2 REQUIRED)
 
 if(MSVC)
-    add_compile_options(/std:c++20 /W4)
+    add_compile_options(/std:c++17 /W4)
 elseif()
-    add_compile_options(-std=c++2a -Wall)
+    add_compile_options(-std=c++17 -Wall)
 endif()
 
 add_subdirectory(src)
