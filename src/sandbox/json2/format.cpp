@@ -222,7 +222,7 @@ Automaton json_format_sign() {
 	for(auto& alternative : alternatives) {
 		copy_transitions_from(*rule.start_state, *alternative.start_state);
 		rule.start_state->is_accepting = rule.start_state->is_accepting
-										 or alternative.start_state->is_accepting;
+										 || alternative.start_state->is_accepting;
 	}
 
 	return rule;
@@ -274,7 +274,7 @@ Automaton json_format_ws() {
 	for(auto& alternative : alternatives) {
 		copy_transitions_from(*rule.start_state, *alternative.start_state);
 		rule.start_state->is_accepting = rule.start_state->is_accepting
-			or alternative.start_state->is_accepting;
+			|| alternative.start_state->is_accepting;
 	}
 
 	return rule;

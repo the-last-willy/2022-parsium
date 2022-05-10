@@ -11,7 +11,7 @@ namespace automaton {
 
 inline
 std::shared_ptr<State> deterministic_union(const State& s0, const State& s1) {
-	auto result = std::make_shared<State>(s0.is_accepting or s1.is_accepting);
+	auto result = std::make_shared<State>(s0.is_accepting || s1.is_accepting);
 
 	// Traverse all states of the intersection of s0 and s1.
 
@@ -20,7 +20,7 @@ std::shared_ptr<State> deterministic_union(const State& s0, const State& s1) {
 	auto states_to_visit = std::vector<BiState>({BiState(&s0, &s1)});
 	auto registered_states = std::map<BiState, std::shared_ptr<State>>({{BiState(&s0, &s1), result}});
 
-	while(not states_to_visit.empty()) {
+	while(!states_to_visit.empty()) {
 		auto current_state = states_to_visit.back();
 		states_to_visit.pop_back();
 
@@ -42,7 +42,7 @@ std::shared_ptr<State> deterministic_union(const State& s0, const State& s1) {
 						auto &unified_transition = current_unified_state->transitions.emplace_back();
 						unified_transition.symbol = t0.symbol;
 						auto unified_state = std::make_shared<State>(
-							get<0>(current_state)->is_accepting or
+							get<0>(current_state)->is_accepting ||
 							get<1>(current_state)->is_accepting);
 						states_to_visit.push_back(current_state);
 						registered_states[current_state] = unified_state;
@@ -61,7 +61,7 @@ std::shared_ptr<State> deterministic_union(const State& s0, const State& s1) {
 					found = true;
 				}
 			}
-			if(not found) {
+			if(!found) {
 				auto& unified_state = registered_states[current_state];
 				unified_state->transitions.push_back(t0);
 			}
@@ -76,7 +76,7 @@ std::shared_ptr<State> deterministic_union(const State& s0, const State& s1) {
 					found = true;
 				}
 			}
-			if(not found) {
+			if(!found) {
 				auto& unified_state = registered_states[current_state];
 				unified_state->transitions.push_back(t1);
 			}

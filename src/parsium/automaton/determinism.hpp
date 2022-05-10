@@ -17,7 +17,7 @@ bool is_deterministic(const Automaton& a) {
 	auto marked_states = std::set({a.start_state.get()});
 	auto states_to_visit = std::vector({a.start_state.get()});
 
-	while(not states_to_visit.empty()) {
+	while(!states_to_visit.empty()) {
 		auto current_state = states_to_visit.back();
 		states_to_visit.pop_back();
 
@@ -30,7 +30,7 @@ bool is_deterministic(const Automaton& a) {
 				}
 			}
 
-			if(not marked_states.contains(ti.end_state.get())) {
+			if(!marked_states.contains(ti.end_state.get())) {
 				marked_states.insert(ti.end_state.get());
 
 				states_to_visit.push_back(ti.end_state.get());

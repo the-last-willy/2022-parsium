@@ -42,7 +42,7 @@ bool does_accept(char codepoint, char c) {
 
 inline
 bool does_accept(const std::string& s, char c) {
-	return s.size() > 0 and c == s.front();
+	return s.size() > 0 && c == s.front();
 }
 
 inline

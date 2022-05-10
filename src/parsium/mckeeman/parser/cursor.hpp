@@ -44,7 +44,7 @@ const Item& current_item(const Cursor& c) {
 
 inline
 bool is_before_rule(const Cursor& c) {
-	return c.alternative == 0 and c.item == 0 and c.character == 0;
+	return c.alternative == 0 && c.item == 0 && c.character == 0;
 }
 
 inline
@@ -54,7 +54,7 @@ bool is_after_rule(const Cursor& c) {
 
 inline
 bool is_before_alternative(const Cursor& c) {
-	return c.item == 0 and c.character == 0;
+	return c.item == 0 && c.character == 0;
 }
 
 inline

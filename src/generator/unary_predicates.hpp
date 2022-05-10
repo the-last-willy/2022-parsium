@@ -22,7 +22,7 @@ struct AndUnaryPredicate : public UnaryPredicate {
 	{}
 
 	bool evaluate(char symbol) const override {
-		return left_operand->evaluate(symbol) and right_operand->evaluate(symbol);
+		return left_operand->evaluate(symbol) && right_operand->evaluate(symbol);
 	}
 
 	std::string text(const std::string& symbol) const override {
@@ -70,7 +70,7 @@ struct NotUnaryPredicate : public UnaryPredicate {
 	{}
 
 	bool evaluate(char symbol) const override {
-		return not operand->evaluate(symbol);
+		return !operand->evaluate(symbol);
 	}
 
 	std::string text(const std::string& symbol) const override {
@@ -88,7 +88,7 @@ struct RangeUnaryPredicate : public UnaryPredicate {
 	{}
 
 	bool evaluate(char symbol) const override {
-		return symbol >= lower_bound and symbol <= upper_bound;
+		return symbol >= lower_bound && symbol <= upper_bound;
 	}
 
 	std::string text(const std::string& symbol) const override {

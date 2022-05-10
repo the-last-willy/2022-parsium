@@ -12,7 +12,7 @@ namespace automaton {
 
 inline
 State composed_with(State s0, std::shared_ptr<State> s1) {
-	if(not s1) {
+	if(!s1) {
 		throw std::logic_error("Nullptr.");
 	}
 
@@ -26,7 +26,7 @@ State composed_with(State s0, std::shared_ptr<State> s1) {
 			states_to_visit.pop_back();
 
 			if(current_state->is_accepting) {
-				if(not current_state->transitions.empty()) {
+				if(!current_state->transitions.empty()) {
 					current_state->is_accepting = false;
 				}
 
@@ -42,7 +42,7 @@ State composed_with(State s0, std::shared_ptr<State> s1) {
 			}
 
 			for(auto& transition : current_state->transitions) {
-				if(not visited_states.contains(transition.end_state)) {
+				if(!visited_states.contains(transition.end_state)) {
 					visited_states.insert(transition.end_state);
 
 					states_to_visit.push_back(transition.end_state);

@@ -17,7 +17,7 @@ void concatenate_with(State& s0, const State& s1) {
 	auto states_to_visit = std::vector<State*>({&s0});
 	auto visited_states = std::set<State*>({&s0});
 
-	while(not states_to_visit.empty()) {
+	while(!states_to_visit.empty()) {
 		auto current_state = states_to_visit.back();
 		states_to_visit.pop_back();
 
@@ -25,7 +25,7 @@ void concatenate_with(State& s0, const State& s1) {
 		// they have already been visited.
 
 		for(auto& transition : current_state->transitions) {
-			if(not visited_states.contains(transition.end_state.get())) {
+			if(!visited_states.contains(transition.end_state.get())) {
 				visited_states.insert(transition.end_state.get());
 
 				states_to_visit.push_back(transition.end_state.get());

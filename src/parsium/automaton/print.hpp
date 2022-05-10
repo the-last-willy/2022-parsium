@@ -41,7 +41,7 @@ void print(const Automaton& a) {
 	auto state_labels = std::map({std::pair{a.start_state.get(), std::size_t(0)}});
 	auto states_to_visit = std::vector({a.start_state.get()});
 
-	while(not states_to_visit.empty()) {
+	while(!states_to_visit.empty()) {
 		auto current_state = states_to_visit.back();
 		states_to_visit.pop_back();
 
@@ -70,7 +70,7 @@ void print(const Automaton& a) {
 	state_labels = std::map({std::pair{a.start_state.get(), std::size_t(0)}});
 	states_to_visit = std::vector({a.start_state.get()});
 
-	while(not states_to_visit.empty()) {
+	while(!states_to_visit.empty()) {
 		auto current_state = states_to_visit.back();
 		states_to_visit.pop_back();
 

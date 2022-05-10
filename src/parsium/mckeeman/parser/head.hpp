@@ -45,7 +45,7 @@ std::size_t depth(const Head& h) {
 inline
 void unwind(Head& h) {
 	// An empty head is accepting,
-	if(not is_empty(h)) {
+	if(!is_empty(h)) {
 		auto th = &top(h);
 		if(is_after_rule(*th)) {
 			// The head is rejecting.
@@ -54,7 +54,7 @@ void unwind(Head& h) {
 			}
 			move_to_rule_end(top(h));
 		} else {
-			if(not is_after_alternative(*th) and is_after_item(*th)) {
+			if(!is_after_alternative(*th) && is_after_item(*th)) {
 				move_to_next_item(*th);
 			}
 
@@ -65,7 +65,7 @@ void unwind(Head& h) {
 				} else {
 					th = &top(h);
 					move_to_next_item(*th);
-					if(not is_after_alternative(*th) and is_after_item(*th)) {
+					if(!is_after_alternative(*th) && is_after_item(*th)) {
 						move_to_next_item(*th);
 					}
 				}
@@ -131,7 +131,7 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 					fed_ = concatenation(std::move(fed_), fed(g, next_head, symbol));
 				}
 			}
-		} else if(not is_after_rule(cursor)) {
+		} else if(!is_after_rule(cursor)) {
 			if(auto name = optional_name(current_item(cursor))) {
 				// Found a name and not symbol consumed yet.
 				push(h, rule(g, *name));

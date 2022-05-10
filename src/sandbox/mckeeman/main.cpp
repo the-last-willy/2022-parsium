@@ -9,7 +9,7 @@ using namespace parsium::mckeeman;
 
 std::string format(const Head& h) {
 	auto format_ = std::stringstream() << ".";
-	if(not is_empty(h)) {
+	if(!is_empty(h)) {
 		for(auto& cursor : h.nested_cursors) {
 			format_ << "/" << cursor.rule->name.string;
 			format_ << "/" << cursor.alternative;

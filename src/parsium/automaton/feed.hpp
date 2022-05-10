@@ -41,7 +41,7 @@ void feed(Position& p, char symbol) {
 
 		}
 		default: {
-			throw std::logic_error("Not impl.");
+			throw std::logic_error("!impl.");
 		}
 	}
 }
@@ -60,12 +60,12 @@ inline
 const State& fed_until_halt(const State& s, common::InputStream& is) {
 	auto current_position = std::optional<const State*>(&s);
 
-	while(not is.is_done()) {
+	while(!is.is_done()) {
 		auto previous_position = *current_position;
 
 		current_position = fed(**current_position, is.peek());
 
-		if(not current_position) {
+		if(!current_position) {
 			return *previous_position;
 		}
 

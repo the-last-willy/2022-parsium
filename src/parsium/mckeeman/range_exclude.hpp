@@ -26,7 +26,7 @@ RangeExclude range_exclude(Range r, Exclude e) {
 inline
 bool does_accept(const RangeExclude& re, char c) {
 	auto& [r, e] = re;
-	return does_accept(r, c) and (not e or does_accept(*e, c));
+	return does_accept(r, c) && (!e || does_accept(*e, c));
 }
 
 inline

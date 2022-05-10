@@ -20,7 +20,7 @@ Range range(char lb, char ub) {
 
 inline
 bool does_accept(const Range& r, char c) {
-	return c >= r.lower_bound and c <= r.upper_bound;
+	return c >= r.lower_bound && c <= r.upper_bound;
 }
 
 }
