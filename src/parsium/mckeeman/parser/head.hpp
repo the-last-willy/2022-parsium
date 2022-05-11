@@ -140,7 +140,7 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 				} else if(auto name = optional_name(first_item)) {
 					// The symbol has to be fed to the named rule.
 					auto next_head = h;
-					move_to_alternative(h, ai);
+					move_to_alternative(next_head, ai);
 					push(next_head, rule(g, *name));
 					fed_ = concatenation(std::move(fed_), fed(g, next_head, symbol));
 				}
