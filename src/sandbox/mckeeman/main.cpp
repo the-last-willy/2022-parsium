@@ -32,7 +32,7 @@ void print(const Parser& p) {
 }
 
 int main() {
-	auto json_parser = parser(json_format(), Name("number"));
+	auto json_parser = parser(json_format(), Name("digits"));
 
 	print(json_parser);
 	std::cout << std::endl;
