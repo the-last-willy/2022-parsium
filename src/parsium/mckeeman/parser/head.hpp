@@ -155,8 +155,9 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 		} else if(!is_after_rule(cursor)) {
 			if(auto name = optional_name(current_item(cursor))) {
 				// Found a name and not symbol consumed yet.
-				push(h, rule(g, *name));
-				fed_ = concatenation(std::move(fed_), fed(g, std::move(h), symbol));
+				auto new_head = h;
+				push(new_head, rule(g, *name));
+				fed_ = concatenation(std::move(fed_), fed(g, std::move(new_head), symbol));
 			} else if(auto literal = optional_literal(current_item(cursor))) {
 				// Progresses in the current alternative.
 				if(auto characters = optional_characters(*literal)) {
