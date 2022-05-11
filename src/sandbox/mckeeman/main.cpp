@@ -32,7 +32,7 @@ void print(const Parser& p) {
 }
 
 int main() {
-	auto json_parser = parser(json_format(), Name("json"));
+	auto json_parser = parser(json_format(), Name("element"));
 
 	auto input = std::string_view("{}");
 
