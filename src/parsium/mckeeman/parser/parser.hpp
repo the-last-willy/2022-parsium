@@ -31,7 +31,7 @@ bool is_accepting(const Parser& p) {
 	auto is_accepting_ = false;
 	for(auto& h : p.heads) {
 		if(is_empty(h)) {
-			is_accepting_ = false;
+			is_accepting_ = true;
 			break;
 		}
 	}
