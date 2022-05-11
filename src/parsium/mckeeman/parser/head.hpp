@@ -40,6 +40,18 @@ std::size_t depth(const Head& h) {
 	return size(h.nested_cursors);
 }
 
+// Moving.
+
+inline
+void move_to_alternative(Head& h, std::size_t alternative) {
+	if(!is_empty(h)) {
+		auto& t = top(h);
+		t.alternative = alternative;
+		t.item = 0;
+		t.character = 0;
+	}
+}
+
 // Modifying ?
 
 inline
@@ -92,7 +104,7 @@ std::vector<Head> concatenation(std::vector<Head> hs0, std::vector<Head> hs1) {
 
 inline
 std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
-	auto fed_ = std::vector<Head>();
+ 	auto fed_ = std::vector<Head>();
 	if(is_empty(h)) {
 		// The empty head is accepting.
 		// Consuming a symbol from the empty state is rejected.
@@ -119,6 +131,7 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 				if(auto literal = optional_literal(first_item)) {
 					if(does_accept(*literal, symbol)) {
 						auto& fh = fed_.emplace_back(h);
+						move_to_alternative(fh, ai);
 						progress(fh);
 						unwind(fh);
 					} else {
@@ -127,6 +140,7 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 				} else if(auto name = optional_name(first_item)) {
 					// The symbol has to be fed to the named rule.
 					auto next_head = h;
+					move_to_alternative(h, ai);
 					push(next_head, rule(g, *name));
 					fed_ = concatenation(std::move(fed_), fed(g, next_head, symbol));
 				}
