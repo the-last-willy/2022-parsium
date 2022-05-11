@@ -32,23 +32,18 @@ void print(const Parser& p) {
 }
 
 int main() {
-	auto json_parser = parser(json_format(), Name("digits"));
+	auto json_parser = parser(json_format(), Name("json"));
 
-	print(json_parser);
-	std::cout << std::endl;
+	auto input = std::string_view("{}");
 
-	feed(json_parser, '1');
+	for(std::size_t i = 0; i < size(input); ++i)
+	{
+		std::cout << "read: " << input.substr(0, i + 1);
+		std::cout << std::endl;
 
-	print(json_parser);
-	std::cout << std::endl;
+		feed(json_parser, input[i]);
 
-	feed(json_parser, '2');
-
-	print(json_parser);
-	std::cout << std::endl;
-
-	feed(json_parser, '3');
-
-	print(json_parser);
-	std::cout << std::endl;
+		print(json_parser);
+		std::cout << std::endl;
+	}
 }
