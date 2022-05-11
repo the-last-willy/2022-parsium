@@ -155,14 +155,17 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 				if(auto characters = optional_characters(*literal)) {
 					if((*characters)[cursor.character] == symbol) {
 						progress(h);
+						fed_.push_back(std::move(h));
 					}
 				} else if(auto range_exclude = optional_range_exclude(*literal)) {
 					if(does_accept(*range_exclude, symbol)) {
 						progress(h);
+						fed_.push_back(std::move(h));
 					}
 				} else if(auto singleton = optional_singleton(*literal)) {
 					if(does_accept(*singleton, symbol)) {
 						progress(h);
+						fed_.push_back(std::move(h));
 					}
 				}
 			}
