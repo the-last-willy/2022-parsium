@@ -40,18 +40,6 @@ std::size_t depth(const Head& h) {
 	return size(h.nested_cursors);
 }
 
-// Moving.
-
-inline
-void move_to_alternative(Head& h, std::size_t alternative) {
-	if(!is_empty(h)) {
-		auto& t = top(h);
-		t.alternative = alternative;
-		t.item = 0;
-		t.character = 0;
-	}
-}
-
 // Modifying ?
 
 inline
@@ -90,6 +78,26 @@ inline
 void progress(Head& h) {
 	progress(top(h));
 	unwind(h);
+}
+
+// Moving.
+
+inline
+void move_to_alternative(Head& h, std::size_t alternative) {
+	if(!is_empty(h)) {
+		auto& t = top(h);
+		t.alternative = alternative;
+		t.item = 0;
+		t.character = 0;
+	}
+}
+
+inline
+void move_to_next_item(Head& h) {
+	if(!is_empty(h)) {
+		move_to_next_item(top(h));
+		unwind(h);
+	}
 }
 
 // Feeding.
