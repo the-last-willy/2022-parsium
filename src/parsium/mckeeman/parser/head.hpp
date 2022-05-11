@@ -125,12 +125,11 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 				// Rule is accepted but no symbol is consumed yet.
 				// If depth is 1, then no symbol can be consumed and the head is rejected.
 				if(depth(h) > 1) {
-					auto& fh = fed_.emplace_back(h);
-					pop(fh);
-					move_to_next_item(top(fh));
-					unwind(fh);
+					auto new_head = h;
+					pop(new_head);
+					move_to_next_item(new_head);
 					// Feed it recursively until the symbol is consumed.
-					fed_ = concatenation(std::move(fed_), fed(g, fh, symbol));
+					fed_ = concatenation(std::move(fed_), fed(g, new_head, symbol));
 				}
 			}
 			for(std::size_t ai = 0; ai < size(current_rule(cursor).alternatives); ++ai) {
