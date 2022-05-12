@@ -13,11 +13,44 @@ struct Head {
 	std::vector<Cursor> nested_cursors;
 };
 
+inline
+std::size_t depth(const Head& h) {
+	return size(h.nested_cursors);
+}
+
 // Testing.
 
 inline
 bool is_empty(const Head& h) {
 	return h.nested_cursors.empty();
+}
+
+inline
+bool is_accepting(const Head& h) {
+	if(is_empty(h)) {
+		return true;
+	} else {
+		// If all remaining items accept nothing then the head is accepting.
+		for(std::size_t d = depth(h); d > 0; --d) {
+			auto& c = h.nested_cursors[d - 1];
+			auto skip_rule = false;
+			if(is_before_rule(c)) {
+				// The head is before the rule and it accepts nothing,
+				// it can be popped.
+				skip_rule = current_rule(c).does_accept_nothing;
+			}
+			if(!skip_rule) {
+				auto& alternative = current_alternative(c);
+				for(std::size_t i = c.item; i < size(alternative.items); ++i) {
+					auto& item = alternative.items[i];
+					if(has_literal(item)) {
+						// A literal
+						return false;
+					}
+				}
+			}
+		}
+	}
 }
 
 inline
@@ -33,11 +66,6 @@ Cursor& push(Head& h, const Rule& r) {
 inline
 Cursor& top(Head& h) {
 	return h.nested_cursors.back();
-}
-
-inline
-std::size_t depth(const Head& h) {
-	return size(h.nested_cursors);
 }
 
 // Modifying ?
