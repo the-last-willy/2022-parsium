@@ -26,26 +26,40 @@ bool is_empty(const Head& h) {
 }
 
 inline
-bool is_accepting(const Head& h) {
+void is_accepting(const Grammar& g, Head h) {
+	
+}
+
+inline
+bool is_accepting(const Grammar& g, const Head& h) {
 	if(is_empty(h)) {
 		return true;
 	} else {
-		// If all remaining items accept nothing then the head is accepting.
+		// If all remaining name items accept nothing then the head is accepting.
 		for(std::size_t d = depth(h); d > 0; --d) {
 			auto& c = h.nested_cursors[d - 1];
-			auto skip_rule = false;
+			auto is_rule_accepting = false;
 			if(is_before_rule(c)) {
-				// The head is before the rule and it accepts nothing,
-				// it can be popped.
-				skip_rule = current_rule(c).does_accept_nothing;
+				if(current_rule(c).does_accept_nothing) {
+					// The head is before the rule and it accepts nothing, it can be popped.
+					is_rule_accepting = true;
+				} else {
+					
+				}
 			}
 			if(!skip_rule) {
+				// Checks all alternatives.
 				auto& alternative = current_alternative(c);
 				for(std::size_t i = c.item; i < size(alternative.items); ++i) {
 					auto& item = alternative.items[i];
-					if(has_literal(item)) {
+					if(auto literal = literal_or(item, nullptr)) {
 						// A literal
 						return false;
+					} else if(auto name = name_or(item, nullptr)) {
+						auto& r = rule(g, *name);
+						if(!r.does_accept_nothing) {
+							return false;
+						}
 					}
 				}
 			}
