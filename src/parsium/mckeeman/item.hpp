@@ -50,12 +50,23 @@ const Literal* optional_literal(const Item& i) {
 }
 
 inline
+const Literal* literal_or(const Item& i, std::nullptr_t) {
+	return std::get_if<Literal>(&i.content);
+}
+
+
+inline
 bool has_name(const Item& i) {
 	return std::holds_alternative<Name>(i.content);
 }
 
 inline
 const Name* optional_name(const Item& i) {
+	return std::get_if<Name>(&i.content);
+}
+
+inline
+const Name* name_or(const Item& i, std::nullptr_t) {
 	return std::get_if<Name>(&i.content);
 }
 
