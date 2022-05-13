@@ -26,48 +26,6 @@ bool is_empty(const Head& h) {
 }
 
 inline
-void is_accepting(const Grammar& g, Head h) {
-	
-}
-
-inline
-bool is_accepting(const Grammar& g, const Head& h) {
-	if(is_empty(h)) {
-		return true;
-	} else {
-		// If all remaining name items accept nothing then the head is accepting.
-		for(std::size_t d = depth(h); d > 0; --d) {
-			auto& c = h.nested_cursors[d - 1];
-			auto is_rule_accepting = false;
-			if(is_before_rule(c)) {
-				if(current_rule(c).does_accept_nothing) {
-					// The head is before the rule and it accepts nothing, it can be popped.
-					is_rule_accepting = true;
-				} else {
-					
-				}
-			}
-			if(!skip_rule) {
-				// Checks all alternatives.
-				auto& alternative = current_alternative(c);
-				for(std::size_t i = c.item; i < size(alternative.items); ++i) {
-					auto& item = alternative.items[i];
-					if(auto literal = literal_or(item, nullptr)) {
-						// A literal
-						return false;
-					} else if(auto name = name_or(item, nullptr)) {
-						auto& r = rule(g, *name);
-						if(!r.does_accept_nothing) {
-							return false;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-inline
 void pop(Head& h) {
 	h.nested_cursors.pop_back();
 }
@@ -75,6 +33,11 @@ void pop(Head& h) {
 inline
 Cursor& push(Head& h, const Rule& r) {
 	return h.nested_cursors.emplace_back(cursor(r));
+}
+
+inline
+const Cursor& top(const Head& h) {
+	return h.nested_cursors.back();
 }
 
 inline
@@ -222,6 +185,41 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 		}
 	}
 	return fed_;
+}
+
+inline
+bool is_accepting(const Grammar& g, const Head& h) {
+	if(is_empty(h)) {
+		return true;
+	} else {
+		// If all remaining name items accept nothing then the head is accepting.
+		auto& c = top(h);
+		auto is_rule_accepting = false;
+		if(is_before_rule(c)) {
+			if(current_rule(c).does_accept_nothing) {
+				// The head is before the rule and it accepts nothing, it can be popped.
+				is_rule_accepting = true;
+			} else {
+
+			}
+		}
+		if(!skip_rule) {
+			// Checks all alternatives.
+			auto& alternative = current_alternative(c);
+			for(std::size_t i = c.item; i < size(alternative.items); ++i) {
+				auto& item = alternative.items[i];
+				if(auto literal = literal_or(item, nullptr)) {
+					// A literal
+					return false;
+				} else if(auto name = name_or(item, nullptr)) {
+					auto& r = rule(g, *name);
+					if(!r.does_accept_nothing) {
+						return false;
+					}
+				}
+			}
+		}
+	}
 }
 
 }
