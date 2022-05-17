@@ -188,6 +188,11 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 }
 
 inline
+bool is_accepting_from_current_alternative(const Grammar& g, const Head& h) {
+
+}
+
+inline
 bool is_accepting(const Grammar& g, const Head& h) {
 	if(is_empty(h)) {
 		return true;
