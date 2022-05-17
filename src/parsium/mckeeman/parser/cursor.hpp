@@ -57,6 +57,14 @@ struct Cursor {
 	std::size_t alternative = 0;
 	std::size_t item = 0;
 	std::size_t character = 0; // Rename into progression.
+
+	bool is_inside_alternative() const {
+		return item > 0;
+	}
+
+	bool is_inside_item() const {
+		return character == 0;
+	}
 };
 
 // Pseudo ctor.
@@ -72,7 +80,7 @@ Cursor cursor(const Rule& r) {
 
 inline
 bool is_inside_item(const Cursor& c) {
-	return c.
+	
 }
 
 inline

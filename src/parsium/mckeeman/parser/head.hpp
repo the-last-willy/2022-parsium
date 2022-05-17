@@ -188,43 +188,44 @@ std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 }
 
 inline
-bool is_accepting_from_current_alternative(const Grammar& g, const Head& h) {
+bool is_accepting_from_current_alternative(const Grammar&, const Head&) {
 
 }
 
 inline
-bool is_accepting(const Grammar& g, const Head& h) {
-	if(is_empty(h)) {
-		return true;
-	} else {
-		// If all remaining name items accept nothing then the head is accepting.
-		auto& c = top(h);
-		auto is_rule_accepting = false;
-		if(is_before_rule(c)) {
-			if(current_rule(c).does_accept_nothing) {
-				// The head is before the rule and it accepts nothing, it can be popped.
-				is_rule_accepting = true;
-			} else {
+bool is_accepting(const Grammar&, const Head&) {
+	return false;
+	// if(is_empty(h)) {
+	// 	return true;
+	// } else {
+	// 	// If all remaining name items accept nothing then the head is accepting.
+	// 	auto& c = top(h);
+	// 	auto is_rule_accepting = false;
+	// 	if(is_before_rule(c)) {
+	// 		if(current_rule(c).does_accept_nothing) {
+	// 			// The head is before the rule and it accepts nothing, it can be popped.
+	// 			is_rule_accepting = true;
+	// 		} else {
 
-			}
-		}
-		if(!skip_rule) {
-			// Checks all alternatives.
-			auto& alternative = current_alternative(c);
-			for(std::size_t i = c.item; i < size(alternative.items); ++i) {
-				auto& item = alternative.items[i];
-				if(auto literal = literal_or(item, nullptr)) {
-					// A literal
-					return false;
-				} else if(auto name = name_or(item, nullptr)) {
-					auto& r = rule(g, *name);
-					if(!r.does_accept_nothing) {
-						return false;
-					}
-				}
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// 	if(!skip_rule) {
+	// 		// Checks all alternatives.
+	// 		auto& alternative = current_alternative(c);
+	// 		for(std::size_t i = c.item; i < size(alternative.items); ++i) {
+	// 			auto& item = alternative.items[i];
+	// 			if(auto literal = literal_or(item, nullptr)) {
+	// 				// A literal
+	// 				return false;
+	// 			} else if(auto name = name_or(item, nullptr)) {
+	// 				auto& r = rule(g, *name);
+	// 				if(!r.does_accept_nothing) {
+	// 					return false;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 
 }
