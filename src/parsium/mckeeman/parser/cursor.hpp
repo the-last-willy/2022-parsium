@@ -20,10 +20,11 @@ namespace mckeeman {
  * - `rule` should probably be not null ?
  * Otherwise it would propagates the need to check for it to be not null.
  * Which is a pain...
+ * But that would prevent from having a default constructor.
+ * Which is also a pain...
  *
  * - `alternative` should be less than the number of alternatives in the rule.
  * Should a cursor be able to represent being
- *
  *
  * - `item` should be strictly less
  *
@@ -36,6 +37,9 @@ namespace mckeeman {
  * Otherwise, operations need to be careful not to break that invariant,
  * and thus need to conveyed to the caller that the operation cannot be done.
  * That
+ *
+ * - Should the point on `Rule` be const ?
+ * It's used for parsing, which shouldn't change the grammar, but still ?
  *
  * - Should cursors have finer representations, like `RuleCursor`, `AlternativeCursor` and so on ?
  * The type would that way convey more meaning and some invariants could be segregated further.
@@ -53,17 +57,47 @@ namespace mckeeman {
  * It would at least split invariants over multiple classes without need for additional context.
  */
 struct Cursor {
-	const Rule* rule = nullptr;
-	std::size_t alternative = 0;
-	std::size_t item = 0;
-	std::size_t character = 0; // Rename into progression.
+	const Rule* rule_ = nullptr;
+	std::size_t alternative_index_ = 0;
+	std::size_t item_index_ = 0;
+	std::size_t character_index_ = 0; // Rename into progression.
+
+	// Rule.
+
+	const Rule& rule() const {
+		return *rule_;
+	}
+
+	bool is_inside_rule() const {
+		return rule_ != nullptr;
+	}
+
+	// Alternative.
+
+	const Alternative& alternative() const {
+		return rule().alternatives[alternative_index_];
+	}
 
 	bool is_inside_alternative() const {
-		return item > 0;
+		return item_index_ > 0;
+	}
+
+	bool move_to_next_item() {
+
+	}
+
+	// Item.
+
+	const Item& item() const {
+		return alternative().items[item_index_];
 	}
 
 	bool is_inside_item() const {
-		return character == 0;
+		return character_index_ == 0;
+	}
+
+	bool move_to_next_character() {
+
 	}
 };
 
