@@ -37,5 +37,10 @@ Rule rule(std::string s) {
 	return rule(name(std::move(s)));
 }
 
+inline
+std::size_t alternative_count(const Rule& r) {
+	return size(r.alternatives);
+}
+
 }
 }
