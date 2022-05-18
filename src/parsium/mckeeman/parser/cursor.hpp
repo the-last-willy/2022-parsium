@@ -68,6 +68,10 @@ struct Cursor {
 		return *rule_;
 	}
 
+	bool is_after_rule() const {
+		return item_index_ < item_count(alternative());
+	}
+
 	bool is_inside_rule() const {
 		return rule_ != nullptr;
 	}
@@ -83,7 +87,8 @@ struct Cursor {
 	}
 
 	bool move_to_next_item() {
-
+		item_index_ += 1;
+		return !is_after_rule();
 	}
 
 	// Item.
@@ -92,13 +97,37 @@ struct Cursor {
 		return alternative().items[item_index_];
 	}
 
+	bool is_after_item() const {
+		item_index_ += 1;
+	}
+
 	bool is_inside_item() const {
 		return character_index_ == 0;
 	}
 
 	bool move_to_next_character() {
-
+		character_index_ += 1;
+		if(is_after_item()) {
+			character_index_ = 0;
+			return move_to_next_item();
+		} else {
+			return false;
+		}
 	}
+};
+
+
+
+struct ItemIterator {
+	const Alternative* alternative_ = nullptr;
+	std::size_t item_ = 0;
+};
+
+struct ItemSentinel {};
+
+struct CharacterBaseCursor {
+	const Item* item_ = nullptr;
+	std::size_t character_ = 0;
 };
 
 // Pseudo ctor.
