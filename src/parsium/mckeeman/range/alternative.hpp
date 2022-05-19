@@ -29,12 +29,12 @@ AlternativeSentinel end(const Rule&) {
 
 inline
 AlternativeIterator& operator++(AlternativeIterator& ai) {
-    ai.alternative_index_ += 1;
+    ai.alternative_index += 1;
 }
 
 inline
 const Alternative& operator*(const AlternativeIterator& ai) {
-    return ai.rule->alternatives[ai.alternative_index_];
+    return ai.rule->alternatives[ai.alternative_index];
 }
 
 }

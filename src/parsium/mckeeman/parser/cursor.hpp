@@ -14,8 +14,12 @@ namespace mckeeman {
  *
  * \section Invariants
  *
- * A cursor can ambiguously be represented as before or after something.
+ * - A cursor can ambiguously be represented as before or after something.
  * It has been chosen to exclude the later.
+ *
+ * - Representing whether a cursor is before an alternative or before a rule is a pain.
+ * Therefore a cursor must always be as precise as possible.
+ * So it cannot be before a rule.
  *
  * - `rule` should probably be not null ?
  * Otherwise it would propagates the need to check for it to be not null.
@@ -57,203 +61,18 @@ namespace mckeeman {
  * It would at least split invariants over multiple classes without need for additional context.
  */
 struct Cursor {
-	const Rule* rule_ = nullptr;
-	std::size_t alternative_index_ = 0;
-	std::size_t item_index_ = 0;
-	std::size_t character_index_ = 0; // Rename into progression.
-
-	// Rule.
-
-	const Rule& rule() const {
-		return *rule_;
-	}
-
-	bool is_after_rule() const {
-		return item_index_ < item_count(alternative());
-	}
-
-	bool is_inside_rule() const {
-		return rule_ != nullptr;
-	}
-
-	// Alternative.
-
-	const Alternative& alternative() const {
-		return rule().alternatives[alternative_index_];
-	}
-
-	bool is_inside_alternative() const {
-		return item_index_ > 0;
-	}
-
-	bool move_to_next_item() {
-		item_index_ += 1;
-		return !is_after_rule();
-	}
-
-	// Item.
-
-	const Item& item() const {
-		return alternative().items[item_index_];
-	}
-
-	bool is_after_item() const {
-		item_index_ += 1;
-	}
-
-	bool is_inside_item() const {
-		return character_index_ == 0;
-	}
-
-	bool move_to_next_character() {
-		character_index_ += 1;
-		if(is_after_item()) {
-			character_index_ = 0;
-			return move_to_next_item();
-		} else {
-			return false;
-		}
-	}
-};
-
-
-
-struct ItemIterator {
-	const Alternative* alternative_ = nullptr;
-	std::size_t item_ = 0;
-};
-
-struct ItemSentinel {};
-
-struct CharacterBaseCursor {
-	const Item* item_ = nullptr;
-	std::size_t character_ = 0;
+	const Alternative* alternative = nullptr;
+	std::size_t item_index = 0;
+	std::size_t character_index = 0;
 };
 
 // Pseudo ctor.
 
 inline
-Cursor cursor(const Rule& r) {
-	auto cursor_ = Cursor();
-	cursor_.rule = &r;
-	return cursor_;
-}
-
-// Accessing.
-
-inline
-bool is_inside_item(const Cursor& c) {
-	
-}
-
-inline
-const Rule& current_rule(const Cursor& c) {
-	return *c.rule;
-}
-
-inline
-const Alternative& current_alternative(const Cursor& c) {
-	return current_rule(c).alternatives[c.alternative];
-}
-
-inline
-const Item& current_item(const Cursor& c) {
-	return current_alternative(c).items[c.item];
-}
-
-inline
-std::size_t remaining_item_count(const Cursor& c) {
-	if(c.item == 0) {
-		// The cursor is not engaged in any alternative yet.
-		// The alternative of which to return the item count is thus undetermined.
-		throw common::PreconditionViolation();
-	}
-
-	// If the cursor is inside an item should it be counted ?
-	// The current answer is yes.
-
-
-}
-
-// Positioning.
-
-inline
-bool is_before_rule(const Cursor& c) {
-	return c.alternative == 0 && c.item == 0 && c.character == 0;
-}
-
-inline
-bool is_after_rule(const Cursor& c) {
-	return c.alternative == size(c.rule->alternatives);
-}
-
-inline
-bool is_before_alternative(const Cursor& c) {
-	return c.item == 0 && c.character == 0;
-}
-
-inline
-bool is_after_alternative(const Cursor& c) {
-	return c.item == size(current_alternative(c).items);
-}
-
-inline
-bool is_before_item(const Cursor& c) {
-	return c.character == 0;
-}
-
-inline
-bool is_after_item(const Cursor& c) {
-	auto& item = current_item(c);
-	if(has_literal(item)) {
-		auto& literal = std::get<Literal>(item.content);
-		if(auto string = std::get_if<std::string>(&literal.content)) {
-			return c.character >= size(*string);
-		} else {
-			return c.character > 0;
-		}
-	} else if(has_name(item)) {
-		return c.character > 0;
-	} else {
-		throw std::logic_error("wtf");
-	}
-}
-
-// Moving.
-
-inline
-void progress(Cursor& c) {
-	c.character += 1;
-}
-
-inline
-void move_to_next_character(Cursor& c) {
-	progress(c);
-}
-
-inline
-void move_to_next_item(Cursor& c) {
-	c.item += 1;
-	c.character = 0;
-}
-
-inline
-void move_to_rule_end(Cursor& c) {
-	c.alternative = size(current_rule(c).alternatives);
-	c.item = 0;
-	c.character = 0;
-}
-
-inline
-bool is_accepting(const Grammar& g, const Cursor& c) {
-	if(c.character > 0) {
-		// The cursor started reading a literal item and is not finished.
-		return false;
-	} else if(c.item > 0) {
-		// The cursor started reading an alternative and hasn't finished yet.
-		// All remaining items need to be accepting without consuming a symbol.
-		for(std::size_t i = 0; i < )
-	}
+Cursor cursor(const Alternative& a) {
+	auto result = Cursor();
+	result.alternative = &a;
+	return result;
 }
 
 }
