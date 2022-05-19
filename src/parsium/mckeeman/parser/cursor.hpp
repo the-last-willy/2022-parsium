@@ -75,5 +75,12 @@ Cursor cursor(const Alternative& a) {
 	return result;
 }
 
+// 
+
+inline
+bool is_at_last_item(const Cursor& c) {
+	return c.item_index + 1 == size(c.alternative->items);
+}
+
 }
 }
