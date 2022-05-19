@@ -4,7 +4,6 @@
 #include <vector>
 
 namespace parsium {
-namespace common {
 
 template<typename T>
 std::vector<T> concatenation(std::vector<T> l0, std::vector<T> l1) {
@@ -15,4 +14,4 @@ std::vector<T> concatenation(std::vector<T> l0, std::vector<T> l1) {
     return l0;
 } 
 
-}}
+}
