@@ -67,5 +67,22 @@ bool does_accept(const Literal& l, char c) {
 	}, l.content);
 }
 
+// --
+
+inline
+const std::string* characters_or(const Literal& l, std::nullptr_t) {
+	return std::get_if<std::string>(&l.content);
+}
+
+inline
+const RangeExclude* range_exclude_or(const Literal& l, std::nullptr_t) {
+	return std::get_if<RangeExclude>(&l.content);
+}
+
+inline
+const char* singleton_or(const Literal& l, std::nullptr_t) {
+	return std::get_if<char>(&l.content);
+}
+
 }
 }
