@@ -13,6 +13,22 @@
 namespace parsium {
 namespace mckeeman {
 
+/**
+ * It's not possible to represent the base rule with only cursors.
+ * Do we want a base rule inside the head then ?
+ * 
+ * How to distinguish the cursor being before and after the base rule ?
+ * Maybe set the base rule to null to signify it's outside the base rule.
+ * 
+ * \section Invariants
+ * 
+ * - A `Head` represents a path uniquely.
+ * 
+ * - Should the head always be before a literal ?
+ * How to represent a head on the base rule ?
+ * How to represent a head after the last literal ?
+ * 
+ */
 struct Head {
 	std::vector<Cursor> nested_cursors;
 };
@@ -80,7 +96,7 @@ inline
 std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 	auto result = std::vector<Head>();
 	if(!is_empty(h)) {
-
+						
 	}
 	return result;
 }
