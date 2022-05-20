@@ -49,7 +49,8 @@ std::vector<Head> fed_nothing(const Grammar& g, Head h) {
 			// otherwise it has to be fed a symbol to progress.
 			auto& next_item = top.alternative->items[top.item_index];
 			if(const Name* name = name_or(next_item, nullptr)) {
-				auto& rule_ = rule(g, name);
+				// The cursor is inside a name.
+				auto& rule_ = rule(g, *name);
 				if(rule_.does_accept_nothing) {
 					if(is_at_last_item(top)) {
 						// The cursor goes out of the alternative.
@@ -62,7 +63,7 @@ std::vector<Head> fed_nothing(const Grammar& g, Head h) {
 						result = fed_nothing(g, std::move(new_head));
 					}
 				}
-				for(auto& alternative : rule_) {
+				for(auto& alternative : rule_.alternatives) {
 					auto alternative_head = h;
 					alternative_head.nested_cursors.push_back(cursor(alternative));
 					result = concatenation(std::move(result),
@@ -72,6 +73,15 @@ std::vector<Head> fed_nothing(const Grammar& g, Head h) {
 		}
 	}
 	result.emplace_back(std::move(h));
+	return result;
+}
+
+inline
+std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
+	auto result = std::vector<Head>();
+	if(!is_empty(h)) {
+
+	}
 	return result;
 }
 
