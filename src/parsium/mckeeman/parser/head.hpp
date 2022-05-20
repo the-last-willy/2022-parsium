@@ -96,7 +96,41 @@ inline
 std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
 	auto result = std::vector<Head>();
 	if(!is_empty(h)) {
+		auto t = top_or(h, UB);
+		auto& alternative_ = *t.alternative;
+		auto& item_ = alternative_.items[t.item_index];
+		if(auto literal = literal_or(item_, nullptr)) {
+			if(auto characters = characters_or(*literal, nullptr)) {
+				if((*characters)[t.character_index] == symbol) {
+					auto fed_head = h;
+					if(t.character_index + 1 == size(*characters)) {
+						// Done with this literal.
 						
+					} else {
+
+					}
+				}
+			} else if(auto range_exclude = range_exclude_or(*literal, nullptr)) {
+				if(does_accept(*rangle_exclude, symbol)) {
+
+				}
+			} else if(auto singleton = singleton_or(*literal, nullptr)) {
+				if(does_accept(*singleton, symbol)) {
+					if(is_at_last_item(item_)) {
+
+					} else {
+
+					}
+				}
+			}
+		} else if(auto name = name_or(item_, nullptr)) {
+			auto named_rule = rule(g, *name);
+			for(auto& alternative : named_rule.alternatives) {
+				auto child_head = h;
+				child_head.nested_cursors.emplace_back(cursor(alternative));
+				result = concatenation(std::move(result), fed(g, ))
+			}
+		}
 	}
 	return result;
 }
