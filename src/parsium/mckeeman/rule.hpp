@@ -3,6 +3,9 @@
 #include "alternative.hpp"
 #include "name.hpp"
 
+#include <parsium/common/exception/precondition_violation.hpp>
+#include <parsium/common/tag/throw.hpp>
+
 #include <vector>
 
 namespace parsium {
@@ -40,6 +43,21 @@ Rule rule(std::string s) {
 inline
 std::size_t alternative_count(const Rule& r) {
 	return size(r.alternatives);
+}
+
+inline
+std::size_t alternative_index_or(const Rule& r, const Alternative& a, ThrowTag) {
+	auto i = std::size_t(0);
+	for(; i < alternative_count(r); ++i) {
+		if(&a == &r.alternatives[i]) {
+			break;
+		}
+	}
+	if(i < alternative_count(r)) {
+		return i;
+	} else {
+		throw PreconditionViolation();
+	}
 }
 
 }
