@@ -27,7 +27,9 @@ namespace mckeeman {
  * - Should the head always be before a literal ?
  * How to represent a head on the base rule ?
  * How to represent a head after the last literal ?
- * 
+ *
+ * - Should the head be able to go past the last item in its alternative ?
+ * That would be redundant with the head being popped and moved to the next item ?
  */
 struct Head {
 	std::vector<Cursor> nested_cursors;
@@ -51,88 +53,87 @@ void pop(Head& h) {
 }
 
 inline
+Head nested(Head h, const Alternative& a) {
+	h.nested_cursors.emplace_back(cursor(a));
+	return h;
+}
+
+inline
+Head unnested(Head h) {
+	if(is_empty(h)) {
+		return h;
+	} else {
+		pop(h);
+		return h;
+	}
+}
+
+inline
+const Cursor& top_or(const Head& h, UndefinedBehaviourTag) {
+	return h.nested_cursors.back();
+}
+
+inline
 Cursor& top_or(Head& h, UndefinedBehaviourTag) {
 	return h.nested_cursors.back();
 }
 
 inline
-std::vector<Head> fed_nothing(const Grammar& g, Head h) {
-	auto result = std::vector<Head>();
+void move_to_next_item(Head& h) {
 	if(!is_empty(h)) {
-		auto& top = top_or(h, UB);
-		if(top.character_index == 0) {
-			// The cursor is not inside a literal,
-			// otherwise it has to be fed a symbol to progress.
-			auto& next_item = top.alternative->items[top.item_index];
-			if(const Name* name = name_or(next_item, nullptr)) {
-				// The cursor is inside a name.
-				auto& rule_ = rule(g, *name);
-				if(rule_.does_accept_nothing) {
-					if(is_at_last_item(top)) {
-						// The cursor goes out of the alternative.
-						auto new_head = h;
-						pop(h);
-						result = fed_nothing(g, std::move(new_head));
-					} else {
-						auto new_head = h;
-						top_or(new_head, UB).item_index += 1;
-						result = fed_nothing(g, std::move(new_head));
-					}
-				}
-				for(auto& alternative : rule_.alternatives) {
-					auto alternative_head = h;
-					alternative_head.nested_cursors.push_back(cursor(alternative));
-					result = concatenation(std::move(result),
-						fed_nothing(g, std::move(alternative_head)));
-				}
+		auto t = &top_or(h, UB);
+		t->item_index += 1;
+		// Pops and increases the item index as long as the head is at the last item.
+		while(t->item_index == size(t->alternative->items)) {
+			pop(h);
+			if(is_empty(h)) {
+				// Can't go past an empty head.
+				break;
+			} else {
+				// Goes to the next item of the parent rule.
+				t = &top_or(h, UB);
+				t->item_index += 1;
 			}
 		}
 	}
-	result.emplace_back(std::move(h));
-	return result;
 }
 
 inline
-std::vector<Head> fed(const Grammar& g, Head h, char symbol) {
-	auto result = std::vector<Head>();
+Head moved_to_next_item(Head h) {
+	move_to_next_item(h);
+	return h;
+}
+
+inline
+void move_to_next_character(Head& h) {
 	if(!is_empty(h)) {
-		auto t = top_or(h, UB);
-		auto& alternative_ = *t.alternative;
-		auto& item_ = alternative_.items[t.item_index];
-		if(auto literal = literal_or(item_, nullptr)) {
+		auto& top = top_or(h, UB);
+		auto& item = current_item(top);
+		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
-				if((*characters)[t.character_index] == symbol) {
-					auto fed_head = h;
-					if(t.character_index + 1 == size(*characters)) {
-						// Done with this literal.
-						
-					} else {
-
-					}
+				if(top.character_index == size(*characters)) {
+					// All characters have been read.
+					top.character_index = 0;
+					move_to_next_item(h);
+				} else {
+					// Progress to the next character.
+					top.character_index += 1;
 				}
-			} else if(auto range_exclude = range_exclude_or(*literal, nullptr)) {
-				if(does_accept(*rangle_exclude, symbol)) {
-
-				}
-			} else if(auto singleton = singleton_or(*literal, nullptr)) {
-				if(does_accept(*singleton, symbol)) {
-					if(is_at_last_item(item_)) {
-
-					} else {
-
-					}
-				}
+			} else {
+				// Either a range exclude or a singleton which consumes a single character.
+				top.character_index = 0;
+				move_to_next_item(h);
 			}
-		} else if(auto name = name_or(item_, nullptr)) {
-			auto named_rule = rule(g, *name);
-			for(auto& alternative : named_rule.alternatives) {
-				auto child_head = h;
-				child_head.nested_cursors.emplace_back(cursor(alternative));
-				result = concatenation(std::move(result), fed(g, ))
-			}
+		} else {
+			throw PreconditionViolation();
 		}
 	}
-	return result;
+}
+
+inline
+Head moved_to_next_character(Head h) {
+	move_to_next_character(h);
+	return h;
 }
 
 }
