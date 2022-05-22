@@ -66,8 +66,6 @@ struct Cursor {
 	std::size_t character_index = 0;
 };
 
-// Pseudo ctor.
-
 inline
 Cursor cursor(const Alternative& a) {
 	auto result = Cursor();
@@ -75,11 +73,14 @@ Cursor cursor(const Alternative& a) {
 	return result;
 }
 
-// 
-
 inline
 bool is_at_last_item(const Cursor& c) {
 	return c.item_index + 1 == size(c.alternative->items);
+}
+
+inline
+const Item& current_item(const Cursor& c) {
+	return c.alternative->items[c.item_index];
 }
 
 }
