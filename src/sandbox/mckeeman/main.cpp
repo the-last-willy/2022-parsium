@@ -44,7 +44,7 @@ int main() {
 	auto c = char();
 	std::cout << "> ";
 	while(std::cin >> c) {
-		json_parser.multi_head = fed(json_parser.grammar, json_parser.multi_head, c);
+		feed(json_parser, c);
 		std::cout << format(json_parser) << std::endl;
 		std::cout << "> ";
 	}
