@@ -111,13 +111,11 @@ void move_to_next_character(Head& h) {
 		auto& item = current_item(top);
 		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
+				top.character_index += 1;
 				if(top.character_index == size(*characters)) {
 					// All characters have been read.
 					top.character_index = 0;
 					move_to_next_item(h);
-				} else {
-					// Progress to the next character.
-					top.character_index += 1;
 				}
 			} else {
 				// Either a range exclude or a singleton which consumes a single character.
