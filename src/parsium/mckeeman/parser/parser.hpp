@@ -34,5 +34,10 @@ bool is_halted(const Parser& p) {
 	return p.multi_head.heads.empty();
 }
 
+inline
+void feed(Parser& p, char symbol) {
+	p.multi_head = fed(p.grammar, p.multi_head, symbol);
+}
+
 }
 }
