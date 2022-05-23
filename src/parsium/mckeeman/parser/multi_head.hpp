@@ -32,6 +32,7 @@ void unify(MultiHead& mh0, MultiHead mh1) {
 	} else {
 		mh0.base_rule = mh1.base_rule;
 	}
+	mh0.is_accepting = mh0.is_accepting || mh1.is_accepting;
 	mh0.heads.insert(
 		end(mh0.heads),
 		std::make_move_iterator(begin(mh1.heads)),
