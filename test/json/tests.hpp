@@ -37,10 +37,18 @@ std::string escaped(std::string str) {
 ////////////////////////////////////////////////////////////////////////////////
 
 struct Test {
-	std::string input;
+	const char* input;
 	bool is_accepted;
 	int read_count = -1;
 };
+
+auto test(const char* input, bool is_accepted, int read_count) {
+	auto result = Test();
+	result.input = input;
+	result.is_accepted = is_accepted;
+	test.read_count = read_count;
+	return result;
+}
 
 struct TestSet {
 	const char* name;
@@ -53,13 +61,9 @@ struct TestSet {
 inline
 TestSet json_unit_tests() {
 	auto result = TestSet();
-	result.name = "json/json/0";
+	result.name = "json";
 	result.tests = std::vector<Test>({
-		Test{
-			.input = "\ttrue\n",
-			.is_accepted = true,
-			.read_count = 4
-		}
+		test("{}", true, 2)
 	});
 	return result;
 }
