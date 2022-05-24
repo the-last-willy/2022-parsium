@@ -1,6 +1,6 @@
 #pragma once
 
-#include "multi_head.hpp"
+#include "../multi_head.hpp"
 
 #include <vector>
 
@@ -27,11 +27,6 @@ Parser parser(Grammar g, Name rule_name) {
 inline
 bool is_accepting(const Parser& p) {
 	return p.multi_head.is_accepting;
-}
-
-inline
-bool is_halted(const Parser& p) {
-	return p.multi_head.heads.empty();
 }
 
 inline
