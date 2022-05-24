@@ -39,7 +39,7 @@ std::string format(const Parser& p) {
 }
 
 int main() {
-	auto json_parser = parser(json_format(), Name("element"));
+	auto json_parser = parser(json_format(), Name("json"));
 
 	auto c = char();
 	std::cout << "> ";
