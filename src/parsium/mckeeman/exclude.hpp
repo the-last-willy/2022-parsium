@@ -25,7 +25,7 @@ Exclude exclude(char c) {
 inline
 bool does_accept(const Exclude& e, char c) {
 	const Exclude* current_exclude = &e;
-	do {
+	while(current_exclude) {
 		if(auto ch = std::get_if<char>(&current_exclude->excluded_characters)) {
 			if(*ch == c) {
 				return false;
@@ -37,8 +37,10 @@ bool does_accept(const Exclude& e, char c) {
 		}
 		if(current_exclude->next) {
 			current_exclude = current_exclude->next.get();
+		} else {
+			break;
 		}
-	} while(current_exclude);
+	}
 	return true;
 }
 
