@@ -35,8 +35,68 @@ TEST_CASE("json") {
 			REQUIRE(is_accepting(parser));
 			REQUIRE(i == size(input));
 		}
+		SECTION("#" + std::to_string(index++)) {
+			auto input = std::string_view("[[[]]]");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#" + std::to_string(index++)) {
+			auto input = std::string_view("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
 		SECTION("#"  + std::to_string(index++)) {
 			auto input = std::string_view("\"\"");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#"  + std::to_string(index++)) {
+			auto input = std::string_view("\"0123456789\"");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#"  + std::to_string(index++)) {
+			auto input = std::string_view("\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#"  + std::to_string(index++)) {
+			auto input = std::string_view("\"abcdefghijklmnopqrstuvwxyz\"");
 			auto i = std::size_t(0);
 			for(; i < size(input); ++i) {
 				feed(parser, input[i]);
@@ -59,8 +119,20 @@ TEST_CASE("json") {
 			REQUIRE(is_accepting(parser));
 			REQUIRE(i == size(input));
 		}
-		SECTION("#" + std::to_string(index++)) {
-			auto input = std::string_view("\"true\"");
+		SECTION("#"  + std::to_string(index++)) {
+			auto input = std::string_view("1234567890");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#"  + std::to_string(index++)) {
+			auto input = std::string_view("0.1234567890");
 			auto i = std::size_t(0);
 			for(; i < size(input); ++i) {
 				feed(parser, input[i]);
@@ -72,7 +144,7 @@ TEST_CASE("json") {
 			REQUIRE(i == size(input));
 		}
 		SECTION("#" + std::to_string(index++)) {
-			auto input = std::string_view("\"false\"");
+			auto input = std::string_view("true");
 			auto i = std::size_t(0);
 			for(; i < size(input); ++i) {
 				feed(parser, input[i]);
@@ -84,7 +156,19 @@ TEST_CASE("json") {
 			REQUIRE(i == size(input));
 		}
 		SECTION("#" + std::to_string(index++)) {
-			auto input = std::string_view("\"null\"");
+			auto input = std::string_view("false");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#" + std::to_string(index++)) {
+			auto input = std::string_view("null");
 			auto i = std::size_t(0);
 			for(; i < size(input); ++i) {
 				feed(parser, input[i]);
