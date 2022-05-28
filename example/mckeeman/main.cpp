@@ -41,10 +41,12 @@ std::string format(const Parser& p) {
 int main() {
 	auto json_parser = parser(json_format(), Name("json"));
 
-	auto c = char();
 	std::cout << "> ";
-	while(std::cin >> c) {
-		feed(json_parser, c);
+	for(int c = std::getchar(); c != EOF; c = std::getchar()) {
+		if(c == '\n') {
+			continue;
+		}
+		feed(json_parser, char(c));
 		std::cout << format(json_parser) << std::endl;
 		std::cout << "> ";
 	}
