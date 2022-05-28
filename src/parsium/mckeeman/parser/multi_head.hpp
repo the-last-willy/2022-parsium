@@ -41,7 +41,7 @@ void unify(MultiHead& mh0, MultiHead mh1) {
 
 inline
 MultiHead _union(MultiHead mh0, MultiHead mh1) {
-	unify(mh0, mh1);
+	unify(mh0, std::move(mh1));
 	return mh0;
 }
 
