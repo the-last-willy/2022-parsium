@@ -148,6 +148,8 @@ parsium::mckeeman::Grammar json_format() {
 		{
 			auto& alternative = rule.alternatives.emplace_back();
 			alternative.items.emplace_back(range(' ', 127) - exclude('"') - exclude('\\'));
+		} {
+			auto& alternative = rule.alternatives.emplace_back();
 			alternative.items.emplace_back('\\');
 			alternative.items.emplace_back(escape);
 		}
