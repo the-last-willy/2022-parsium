@@ -24,6 +24,18 @@ TEST_CASE("json") {
 			REQUIRE(i == size(input));
 		}
 		SECTION("#" + std::to_string(index++)) {
+			auto input = std::string_view("{\"object\": {}, \"array\": [], \"string\": \"\", \"true\": true}");
+			auto i = std::size_t(0);
+			for(; i < size(input); ++i) {
+				feed(parser, input[i]);
+				if(is_halted(parser)) {
+					break;
+				}
+			}
+			REQUIRE(is_accepting(parser));
+			REQUIRE(i == size(input));
+		}
+		SECTION("#" + std::to_string(index++)) {
 			auto input = std::string_view("[]");
 			auto i = std::size_t(0);
 			for(; i < size(input); ++i) {
