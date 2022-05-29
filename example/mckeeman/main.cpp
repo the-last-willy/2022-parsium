@@ -10,7 +10,6 @@ using namespace parsium::mckeeman;
 
 std::string format(const Grammar& g, const MultiHead& mh) {
 	auto ss = std::stringstream();
-	ss << "is_accepting = " << mh.is_accepting << ",\n";
 	ss << "heads = {\n";
 	for(auto& head : mh.heads) {
 		ss << "  ";
@@ -35,19 +34,23 @@ std::string format(const Grammar& g, const MultiHead& mh) {
 }
 
 std::string format(const Parser& p) {
-	return format(p.grammar, p.multi_head);
+	auto ss = std::stringstream();
+	ss << "is_accepting = " << is_accepting(p) << ",\n";
+	ss << format(p.grammar, p.multi_head);
+	return ss.str();
 }
 
 int main() {
 	auto json_parser = parser(json_format(), Name("json"));
+	std::cout << format(json_parser) << std::endl;
 
-	std::cout << "> ";
+	std::cout << "> " << std::flush;
 	for(int c = std::getchar(); c != EOF; c = std::getchar()) {
 		if(c == '\n') {
 			continue;
 		}
 		feed(json_parser, char(c));
 		std::cout << format(json_parser) << std::endl;
-		std::cout << "> ";
+		std::cout << "> " << std::flush;
 	}
 }
