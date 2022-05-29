@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../multi_head.hpp"
+#include "parsium/mckeeman/parser/multi_head/multi_head.hpp"
 
 #include <vector>
 
@@ -20,18 +20,6 @@ Parser parser(Grammar g, Name rule_name) {
 	parser_.grammar = std::move(g);
 	parser_.multi_head = multi_head(parser_.grammar, rule(parser_.grammar, rule_name));
 	return parser_;
-}
-
-// State.
-
-inline
-bool is_accepting(const Parser& p) {
-	return p.multi_head.is_accepting;
-}
-
-inline
-void feed(Parser& p, char symbol) {
-	p.multi_head = fed(p.grammar, p.multi_head, symbol);
 }
 
 }
