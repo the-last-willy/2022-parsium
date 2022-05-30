@@ -1,15 +1,20 @@
 #pragma once
 
+#include "parsium/mckeeman/parser/message/message.hpp"
 #include "parsium/mckeeman/parser/multi_head/multi_head.hpp"
 
+#include <functional>
 #include <vector>
 
 namespace parsium {
 namespace mckeeman {
 
+using ParserListener = std::function<void(ParserMessage)>;
+
 struct Parser {
 	Grammar grammar;
 	MultiHead multi_head;
+	ParserListener listener;
 };
 
 // Pseudo ctor.
