@@ -15,7 +15,7 @@ struct Parser {
 // Pseudo ctor.
 
 inline
-Parser parser(Grammar g, Name rule_name) {
+Parser parser(Grammar g, const Name& rule_name) {
 	auto parser_ = Parser();
 	parser_.grammar = std::move(g);
 	parser_.multi_head = multi_head(parser_.grammar, rule(parser_.grammar, rule_name));
