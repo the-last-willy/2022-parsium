@@ -63,7 +63,6 @@ namespace mckeeman {
 struct Cursor {
 	const Alternative* alternative = nullptr;
 	std::size_t item_index = 0;
-	std::size_t character_index = 0;
 };
 
 inline

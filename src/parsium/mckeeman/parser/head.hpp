@@ -33,6 +33,7 @@ namespace mckeeman {
  */
 struct Head {
 	std::vector<Cursor> nested_cursors;
+	std::size_t character_index = 0;
 };
 
 inline
@@ -111,15 +112,14 @@ void move_to_next_character(Head& h) {
 		auto& item = current_item(top);
 		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
-				top.character_index += 1;
-				if(top.character_index == size(*characters)) {
+				h.character_index += 1;
+				if(h.character_index == size(*characters)) {
 					// All characters have been read.
-					top.character_index = 0;
+					h.character_index = 0;
 					move_to_next_item(h);
 				}
 			} else {
 				// Either a range exclude or a singleton which consumes a single character.
-				top.character_index = 0;
 				move_to_next_item(h);
 			}
 		} else {
