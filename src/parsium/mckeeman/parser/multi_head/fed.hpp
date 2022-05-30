@@ -15,7 +15,7 @@ MultiHead fed(const Grammar& g, const Head& h, char symbol) {
 		auto& item = current_item(top);
 		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
-				if((*characters)[top.character_index] == symbol) {
+				if((*characters)[h.character_index] == symbol) {
 					unify(result, moved_to_next_character(h));
 				}
 			} else if(auto range_exclude = range_exclude_or(*literal, nullptr)) {
