@@ -11,7 +11,19 @@ namespace mckeeman {
 inline
 std::string generate_cpp_function_declarations(Generator&, const Rule& r) {
     auto ss = std::stringstream();
-	ss << "bool parse_" << r.name.string << "(Parser& p, char symbol);\n";
+	ss << "bool parse_rule_" << r.name.string << "(Parser& p);\n";
+	for(auto& alternative : r.alternatives) {
+		ss << "bool parse_alternative_" << r.name.string << "_" << alternative_index_or(r, alternative, _throw) << "(Parser& p);\n";
+		for(std::size_t item_i = 0; item_i < size(alternative.items); ++item_i) {
+			auto& item = alternative.items[item_i];
+			ss << "bool parse_item_" << r.name.string << "_" << alternative_index_or(r, alternative, _throw) << "_" << item_i << "(Parser& p);\n";
+			if(auto literal = literal_or(item, nullptr)) {
+
+			} else if(auto name = name_or(item, nullptr)) {
+				ss << "bool parse_name_" << r.name.string << "_" << alternative_index_or(r, alternative, _throw) << "_" << item_i << "(Parser& p);\n";
+			}
+		}
+	}
 	return ss.str();
 }
 
@@ -26,7 +38,7 @@ std::string generate_cpp_function_declarations(Generator& g) {
 }
 
 inline
-std::string generate_cpp_function_definitions(Generator& g, const Rule& r, const Alternative& a) {
+std::string generate_cpp_function_definitions(Generator&, const Rule&, const Alternative&) {
 	auto ss = std::stringstream();
 
 	return ss.str();
