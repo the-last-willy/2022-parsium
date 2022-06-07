@@ -2,6 +2,8 @@
 
 #include "parsium/mckeeman/builder/alternative/builder.hpp"
 
+#include <parsium/common/std/ranges/subrange/subrange.hpp>
+
 #include <string>
 #include <string_view>
 #include <vector>
@@ -28,6 +30,14 @@ public:
 	, name_(name)
 	{}
 
+	auto alternatives() const {
+		return subrange(begin(alternatives_), end(alternatives_));
+	}
+
+	auto alternatives() {
+		return subrange(begin(alternatives_), end(alternatives_));
+	}
+
 	const GrammarBuilder& grammar() const {
 		return *grammar_;
 	}
@@ -39,6 +49,10 @@ public:
 	std::string_view name() const {
 		return name_;
 	}
+
+	//
+
+
 };
 
 }}

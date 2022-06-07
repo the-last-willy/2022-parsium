@@ -8,9 +8,8 @@ namespace parsium {
 namespace mckeeman {
 
 class ItemBuilder {
-public:
 
-private:
+public:
 
 };
 
