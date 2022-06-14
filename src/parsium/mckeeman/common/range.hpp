@@ -2,6 +2,7 @@
 
 namespace parsium {
 namespace mckeeman {
+namespace builder {
 
 struct Range {
 	Range(char lower_bound, char upper_bound)
@@ -23,5 +24,4 @@ bool does_accept(const Range& r, char c) {
 	return c >= r.lower_bound && c <= r.upper_bound;
 }
 
-}
-}
+}}}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parsium/mckeeman/grammar.hpp"
+#include <parsium/mckeeman/concept/grammar.hpp>
 
 #include <parsium/common/exception/precondition_violation.hpp>
 
@@ -10,8 +10,6 @@ namespace parsium {
 namespace mckeeman {
 
 /**
- *
- *
  * \section Invariants
  *
  * - A cursor can ambiguously be represented as before or after something.
@@ -61,12 +59,12 @@ namespace mckeeman {
  * It would at least split invariants over multiple classes without need for additional context.
  */
 struct Cursor {
-	const Alternative* alternative = nullptr;
+	const builder::Alternative* alternative = nullptr;
 	std::size_t item_index = 0;
 };
 
 inline
-Cursor cursor(const Alternative& a) {
+Cursor cursor(const builder::Alternative& a) {
 	auto result = Cursor();
 	result.alternative = &a;
 	return result;
@@ -74,12 +72,12 @@ Cursor cursor(const Alternative& a) {
 
 inline
 bool is_at_last_item(const Cursor& c) {
-	return c.item_index + 1 == size(c.alternative->items);
+	return c.item_index + 1 == size(items(*c.alternative));
 }
 
 inline
-const Item& current_item(const Cursor& c) {
-	return c.alternative->items[c.item_index];
+const builder::Item& current_item(const Cursor& c) {
+	return items(*c.alternative)[c.item_index];
 }
 
 }

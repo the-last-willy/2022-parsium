@@ -2,13 +2,15 @@
 
 #include "parsium/mckeeman/parser/head.hpp"
 
+#include <parsium/mckeeman/concept/traits.hpp>
+
 #include <vector>
 
 namespace parsium {
 namespace mckeeman {
 
 struct MultiHead {
-	const Rule* base_rule = nullptr;
+	const builder::Rule* base_rule = nullptr;
 
 	bool is_accepting = false;
 	std::vector<Head> heads;
@@ -46,10 +48,10 @@ MultiHead _union(MultiHead mh0, MultiHead mh1) {
 }
 
 inline
-MultiHead multi_head(const Grammar&, const Rule& r) {
+MultiHead multi_head(const builder::Grammar&, const builder::Rule& r) {
 	auto result = MultiHead();
 	result.base_rule = &r;
-	for(auto& alternative : r.alternatives) {
+	for(auto& alternative : alternatives(r)) {
 		auto h = Head();
 		h.nested_cursors.emplace_back(cursor(alternative));
 		unify(result, h);

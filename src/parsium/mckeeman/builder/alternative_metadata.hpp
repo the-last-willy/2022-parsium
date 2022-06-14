@@ -2,8 +2,9 @@
 
 namespace parsium {
 namespace mckeeman {
+namespace builder {
 
-struct RuleBuilder;
+struct Rule;
 
 class ZString8 {
     char* characters = "\0";
@@ -15,10 +16,10 @@ struct Property {
     T value;
 };  
 
-class AlternativeMetadataBuilder {
+class AlternativeMetadata {
     
 
 public:
 };
 
-}}
+}}}

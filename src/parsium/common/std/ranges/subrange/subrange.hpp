@@ -10,10 +10,10 @@ struct Subrange {
 	Iterator iterator;
 	Sentinel sentinel;
 
-	auto& operator[](std::ptrdiff_t i) {
-		// Very unsafe.
-		return *(iterator + i);
-	}
+//	auto& operator[](std::ptrdiff_t i) {
+//		// Very unsafe.
+//		return *(iterator + i);
+//	}
 };
 
 template<typename I, typename S>

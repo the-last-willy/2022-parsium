@@ -16,14 +16,14 @@ namespace mckeeman {
 /**
  * It's not possible to represent the base rule with only cursors.
  * Do we want a base rule inside the head then ?
- * 
+ *
  * How to distinguish the cursor being before and after the base rule ?
  * Maybe set the base rule to null to signify it's outside the base rule.
- * 
+ *
  * \section Invariants
- * 
+ *
  * - A `Head` represents a path uniquely.
- * 
+ *
  * - Should the head always be before a literal ?
  * How to represent a head on the base rule ?
  * How to represent a head after the last literal ?
@@ -54,7 +54,7 @@ void pop(Head& h) {
 }
 
 inline
-Head nested(Head h, const Alternative& a) {
+Head nested(Head h, const builder::Alternative& a) {
 	h.nested_cursors.emplace_back(cursor(a));
 	return h;
 }
@@ -85,7 +85,7 @@ void move_to_next_item(Head& h) {
 		auto t = &top_or(h, UB);
 		t->item_index += 1;
 		// Pops and increases the item index as long as the head is at the last item.
-		while(t->item_index == size(t->alternative->items)) {
+		while(t->item_index == size(items(*t->alternative))) {
 			pop(h);
 			if(is_empty(h)) {
 				// Can't go past an empty head.
