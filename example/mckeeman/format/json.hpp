@@ -1,11 +1,14 @@
 #pragma once
 
-#include "parsium/mckeeman.hpp"
+#include <parsium/mckeeman/builder.hpp>
 
-parsium::mckeeman::GrammarBuilder json_format() {
-	using namespace parsium::mckeeman;
+namespace format {
 
-	auto grammar =  parsium::mckeeman::GrammarBuilder();
+using namespace parsium::mckeeman;
+
+inline
+builder::Grammar json() {
+	auto grammar =  builder::Grammar();
 
 	auto& json = grammar.add_rule("json");
 	auto& value = grammar.add_rule("value");
@@ -52,26 +55,26 @@ parsium::mckeeman::GrammarBuilder json_format() {
 			alternative.add_item(number);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item("true");
+			alternative.add_item(builder::literal("true"));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item("false");
+			alternative.add_item(builder::literal("false"));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item("null");
+			alternative.add_item(builder::literal("null"));
 		}
 	} {
 		auto& rule = object;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('{');
+			alternative.add_item(builder::literal('{'));
 			alternative.add_item(ws);
-			alternative.add_item('}');
+			alternative.add_item(builder::literal('}'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('{');
+			alternative.add_item(builder::literal('{'));
 			alternative.add_item(members);
-			alternative.add_item('}');
+			alternative.add_item(builder::literal('}'));
 		}
 	} {
 		auto& rule = members;
@@ -81,7 +84,7 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		} {
 			auto& alternative = rule.add_alternative();
 			alternative.add_item(member);
-			alternative.add_item(',');
+			alternative.add_item(builder::literal(','));
 			alternative.add_item(members);
 		}
 	} {
@@ -91,21 +94,21 @@ parsium::mckeeman::GrammarBuilder json_format() {
 			alternative.add_item(ws);
 			alternative.add_item(string);
 			alternative.add_item(ws);
-			alternative.add_item(':');
+			alternative.add_item(builder::literal(':'));
 			alternative.add_item(element);
 		}
 	} {
 		auto& rule = array;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('[');
+			alternative.add_item(builder::literal('['));
 			alternative.add_item(ws);
-			alternative.add_item(']');
+			alternative.add_item(builder::literal(']'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('[');
+			alternative.add_item(builder::literal('['));
 			alternative.add_item(elements);
-			alternative.add_item(']');
+			alternative.add_item(builder::literal(']'));
 		}
 	} {
 		auto& rule = elements;
@@ -115,7 +118,7 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		} {
 			auto& alternative = rule.add_alternative();
 			alternative.add_item(element);
-			alternative.add_item(',');
+			alternative.add_item(builder::literal(','));
 			alternative.add_item(elements);
 		}
 	} {
@@ -130,13 +133,13 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		auto& rule = string;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('"');
+			alternative.add_item(builder::literal('"'));
 			alternative.add_item(characters);
-			alternative.add_item('"');
+			alternative.add_item(builder::literal('"'));
 		}
 	} {
 		auto& rule = characters;
-		rule.does_accept_nothing = true;
+		rule.add_alternative(builder::nothing);
 		{
 			auto& alternative = rule.add_alternative();
 			alternative.add_item(character);
@@ -146,41 +149,41 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		auto& rule = character;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(range(' ', 127) - exclude('"') - exclude('\\'));
+			alternative.add_item(literal(builder::range(' ', 127) - Singleton('"') - Singleton('\\')));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('\\');
+			alternative.add_item(builder::literal('\\'));
 			alternative.add_item(escape);
 		}
 	} {
 		auto& rule = escape;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('"');
+			alternative.add_item(builder::literal('"'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('\\');
+			alternative.add_item(builder::literal('\\'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('/');
+			alternative.add_item(builder::literal('/'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('b');
+			alternative.add_item(builder::literal('b'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('f');
+			alternative.add_item(builder::literal('f'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('n');
+			alternative.add_item(builder::literal('n'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('r');
+			alternative.add_item(builder::literal('r'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('t');
+			alternative.add_item(builder::literal('t'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('u');
+			alternative.add_item(builder::literal('u'));
 			alternative.add_item(hex);
 			alternative.add_item(hex);
 			alternative.add_item(hex);
@@ -193,10 +196,10 @@ parsium::mckeeman::GrammarBuilder json_format() {
 			alternative.add_item(digit);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(range('A', 'F'));
+			alternative.add_item(builder::literal(builder::range('A', 'F')));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(range('a', 'f'));
+			alternative.add_item(builder::literal(builder::range('a', 'f')));
 		}
 	} {
 		auto& rule = number;
@@ -217,11 +220,11 @@ parsium::mckeeman::GrammarBuilder json_format() {
 			alternative.add_item(digits);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('-');
+			alternative.add_item(builder::literal('-'));
 			alternative.add_item(digit);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('-');
+			alternative.add_item(builder::literal('-'));
 			alternative.add_item(onenine);
 			alternative.add_item(digits);
 		}
@@ -239,7 +242,7 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		auto& rule = digit;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('0');
+			alternative.add_item(builder::literal('0'));
 		} {
 			auto& alternative = rule.add_alternative();
 			alternative.add_item(onenine);
@@ -248,61 +251,63 @@ parsium::mckeeman::GrammarBuilder json_format() {
 		auto& rule = onenine;
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(range('1', '9'));
+			alternative.add_item(builder::literal(builder::range('1', '9')));
 		}
 	} {
 		auto& rule = fraction;
-		rule.does_accept_nothing = true;
+		rule.add_alternative(builder::nothing);
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('.');
+			alternative.add_item(builder::literal('.'));
 			alternative.add_item(digits);
 		}
 	} {
 		auto& rule = exponent;
-		rule.does_accept_nothing = true;
+		rule.add_alternative(builder::nothing);
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('E');
+			alternative.add_item(builder::literal('E'));
 			alternative.add_item(sign);
 			alternative.add_item(digits);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('e');
+			alternative.add_item(builder::literal('e'));
 			alternative.add_item(sign);
 			alternative.add_item(digits);
 		}
 	} {
 		auto& rule = sign;
-		rule.does_accept_nothing = true;
+		rule.add_alternative(builder::nothing);
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('+');
+			alternative.add_item(builder::literal('+'));
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item('-');
+			alternative.add_item(builder::literal('-'));
 		}
 	} {
 		auto& rule = ws;
-		rule.does_accept_nothing = true;
+		rule.add_alternative(builder::nothing);
 		{
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(char(0x20));
+			alternative.add_item(builder::literal(char(0x20)));
 			alternative.add_item(ws);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(char(0x0A));
+			alternative.add_item(builder::literal(char(0x0A)));
 			alternative.add_item(ws);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(char(0x0D));
+			alternative.add_item(builder::literal(char(0x0D)));
 			alternative.add_item(ws);
 		} {
 			auto& alternative = rule.add_alternative();
-			alternative.add_item(char(0x09));
+			alternative.add_item(builder::literal(char(0x09)));
 			alternative.add_item(ws);
 		}
 	}
-	
+
 	return grammar;
+}
+
 }
