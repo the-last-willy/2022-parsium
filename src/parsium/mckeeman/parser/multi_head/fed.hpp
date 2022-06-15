@@ -1,12 +1,12 @@
 #pragma once
 
-#include "multi_head.hpp"
+#include "parsium/mckeeman/parser/multi_head.hpp"
 
 namespace parsium {
 namespace mckeeman {
 
 inline
-MultiHead fed(const Grammar& g, const Head& h, char symbol) {
+MultiHead fed(const builder::Grammar& g, const Head& h, char symbol) {
 	if(h.nested_cursors.empty()) {
 		return {};
 	} else {
