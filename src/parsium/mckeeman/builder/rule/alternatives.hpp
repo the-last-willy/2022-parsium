@@ -9,12 +9,12 @@ namespace builder {
 
 inline
 auto Rule::alternatives() const {
-	return subrange(begin(alternatives_), end(alternatives_));
+	return alternatives_;
 }
 
 inline
 auto Rule::alternatives() {
-	return subrange(begin(alternatives_), end(alternatives_));
+	return alternatives_;
 }
 
 }}}

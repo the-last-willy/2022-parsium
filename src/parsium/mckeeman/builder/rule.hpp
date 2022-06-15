@@ -7,9 +7,7 @@
 
 #include <parsium/common/std/ranges/subrange/subrange.hpp>
 
-#include <list>
-#include <string>
-#include <string_view>
+#include <deque>
 
 namespace parsium {
 namespace mckeeman {
@@ -26,7 +24,7 @@ class Rule {
 
 	Name name_;
 
-	std::list<Alternative> alternatives_;
+	std::deque<Alternative> alternatives_;
 	bool does_accept_nothing_ = false;
 
 public:
@@ -41,10 +39,9 @@ public:
 	auto alternatives();
 	auto grammar() const -> const Grammar&;
 	auto grammar() -> Grammar&;
+	auto name() const -> const Name&;
 
-	const Name& name() const {
-		return name_;
-	}
+	auto does_accept_nothing() const -> bool { return does_accept_nothing_; }
 
 	//
 
