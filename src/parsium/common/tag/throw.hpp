@@ -2,8 +2,6 @@
 
 namespace parsium {
 
-struct ThrowTag {};
-
-constexpr auto _throw = ThrowTag();
+struct {} constexpr _throw;
 
 }
