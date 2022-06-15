@@ -1,5 +1,6 @@
-#include <example/mckeeman/json.hpp>
-#include <parsium/mckeeman.hpp>
+#include <example/mckeeman/format/json.hpp>
+#include <parsium/mckeeman/builder.hpp>
+#include <parsium/mckeeman/parser.hpp>
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
@@ -8,8 +9,8 @@
 
 TEST_CASE("json") {
 	SECTION("rule: \"json\"") {
-		auto parser = parsium::mckeeman::parser(
-			json_format(), parsium::mckeeman::Name("json"));
+		auto parser = parsium::mckeeman::parser::parser(
+			format::json(), parsium::mckeeman::builder::Name("json"));
 		auto index = 1;
 		SECTION("#" + std::to_string(index++)) {
 			auto input = std::string_view("{}");

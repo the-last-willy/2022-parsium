@@ -70,12 +70,12 @@ Head unnested(Head h) {
 }
 
 inline
-const Cursor& top_or(const Head& h, UndefinedBehaviourTag) {
+const Cursor& top_or(const Head& h, decltype(UB)) {
 	return h.nested_cursors.back();
 }
 
 inline
-Cursor& top_or(Head& h, UndefinedBehaviourTag) {
+Cursor& top_or(Head& h, decltype(UB)) {
 	return h.nested_cursors.back();
 }
 
