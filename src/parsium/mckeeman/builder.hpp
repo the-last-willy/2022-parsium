@@ -7,10 +7,12 @@
 #include "builder/range_exclude/operator_subtraction.hpp"
 #include "builder/rule/alternatives.hpp"
 #include "builder/rule/grammar.hpp"
+#include "builder/rule/name.inl"
 #include "builder/traits.hpp"
 #include "concept/grammar/rule.hpp"
 #include "concept/grammar.hpp"
 #include "concept/name.hpp"
+#include "concept/rule/index_of.hpp"
 #include "concept/rule.hpp"
 #include "concept/traits.hpp"
 
