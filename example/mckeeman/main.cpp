@@ -1,6 +1,7 @@
 #include "format/json.hpp"
 
 #include <parsium/common/tag/throw.hpp>
+#include <parsium/mckeeman/formatting.hpp>
 #include <parsium/mckeeman/parser.hpp>
 
 #include <iostream>
@@ -44,7 +45,9 @@ std::string formatted(const parser::Parser& p) {
 int main() {
 	auto format = format::json();
 
-	auto json_parser = parser::parser(format, builder::Name("json"));
+	std::cout << formatting::to_string(format) << std::endl;
+
+	// auto json_parser = parser::parser(format, builder::Name("json"));
 //	std::cout << format(json_parser) << std::endl;
 //
 //	std::cout << "> " << std::flush;
