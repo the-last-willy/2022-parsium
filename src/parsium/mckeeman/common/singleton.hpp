@@ -17,4 +17,9 @@ struct Singleton {
 	}
 };
 
+inline
+bool does_accept(const Singleton& s, char c) {
+	return s.codepoint == c;
+}
+
 }}
