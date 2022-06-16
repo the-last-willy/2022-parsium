@@ -113,7 +113,7 @@ void move_to_next_character(Head& h) {
 		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
 				h.character_index += 1;
-				if(h.character_index == size(*characters)) {
+				if(h.character_index == size(characters->content)) {
 					// All characters have been read.
 					h.character_index = 0;
 					move_to_next_item(h);

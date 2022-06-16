@@ -1,5 +1,7 @@
 #pragma once
 
+#include "is_accepting.hpp"
+
 #include "parsium/mckeeman/parser/multi_head.hpp"
 
 namespace parsium {
@@ -15,7 +17,7 @@ MultiHead fed(const builder::Grammar& g, const Head& h, char symbol) {
 		auto& item = current_item(top);
 		if(auto literal = literal_or(item, nullptr)) {
 			if(auto characters = characters_or(*literal, nullptr)) {
-				if((*characters)[h.character_index] == symbol) {
+				if(characters->content[h.character_index] == symbol) {
 					unify(result, moved_to_next_character(h));
 				}
 			} else if(auto range_exclude = range_exclude_or(*literal, nullptr)) {
@@ -28,8 +30,8 @@ MultiHead fed(const builder::Grammar& g, const Head& h, char symbol) {
 				}
 			}
 		} else if(auto name = name_or(item, nullptr)) {
-			auto& rule = mckeeman::rule(g, *name);
-			for(auto& alternative : rule.alternatives) {
+			auto& rule = mckeeman::rule_or(g, *name, UB);
+			for(auto& alternative : alternatives(rule)) {
 				auto nested = mckeeman::nested(h, alternative);
 				unify(result, fed(g, nested, symbol));
 			}
@@ -42,7 +44,7 @@ MultiHead fed(const builder::Grammar& g, const Head& h, char symbol) {
 }
 
 inline
-MultiHead fed(const Grammar& g, const MultiHead& mh, char symbol) {
+MultiHead fed(const builder::Grammar& g, const MultiHead& mh, char symbol) {
 	auto result = MultiHead();
 	for(auto& head : mh.heads) {
 		unify(result, fed(g, head, symbol));

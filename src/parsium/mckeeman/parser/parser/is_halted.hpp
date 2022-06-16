@@ -6,7 +6,7 @@ namespace parsium {
 namespace mckeeman {
 
 inline
-bool is_halted(const Parser& p) {
+bool is_halted(const parser::Parser& p) {
 	return p.multi_head.heads.empty();
 }
 
