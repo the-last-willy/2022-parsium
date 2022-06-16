@@ -7,6 +7,9 @@
 
 #include <string_view>
 
+using namespace parsium;
+using namespace parsium::mckeeman;
+
 TEST_CASE("json") {
 	SECTION("rule: \"json\"") {
 		auto parser = parsium::mckeeman::parser::parser(
