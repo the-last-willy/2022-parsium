@@ -1,5 +1,6 @@
 #pragma once
 
+#include "parsium/mckeeman/builder/characters.hpp"
 #include "parsium/mckeeman/builder/name.hpp"
 #include "parsium/mckeeman/builder/range_exclude.hpp"
 #include "parsium/mckeeman/builder/range_exclude/does_accept.hpp"
@@ -16,7 +17,11 @@ namespace builder {
 class Literal {
 public:
 	// Fuse singleton and range exclude together, or with string.
-	std::variant<Singleton, RangeExclude, std::string> content;
+	// Remove dependency to string.
+	std::variant<Characters, Singleton, RangeExclude> content;
+
+	template<typename T>
+	auto dispatch_to(T&& t) const -> decltype(auto);
 };
 
 //
@@ -27,7 +32,7 @@ Literal literal(T&& t) {
 }
 
 Literal literal(const char* str) {
-	return Literal({std::string(str)});
+	return Literal({Characters({std::move(str)})});
 }
 
 Literal literal(Range r) {
@@ -41,16 +46,6 @@ Literal literal(RangeExclude re) {
 // --
 
 inline
-bool does_accept(Singleton s, char c) {
-	return c == s;
-}
-
-inline
-bool does_accept(const std::string& s, char c) {
-	return s.size() > 0 && c == s.front();
-}
-
-inline
 bool does_accept(const Literal& l, char c) {
 	return std::visit([c](auto&& a) -> bool {
 		return does_accept(a, c);
@@ -60,8 +55,8 @@ bool does_accept(const Literal& l, char c) {
 // --
 
 inline
-const std::string* characters_or(const Literal& l, std::nullptr_t) {
-	return std::get_if<std::string>(&l.content);
+const Characters* characters_or(const Literal& l, std::nullptr_t) {
+	return std::get_if<Characters>(&l.content);
 }
 
 inline
