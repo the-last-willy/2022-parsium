@@ -21,7 +21,8 @@ public:
 	: item_(std::move(l))
 	{}
 
-	//
+	template<typename T>
+	auto dispatch_to(T&& t) const -> decltype(auto);
 
 	const Literal* literal_or(std::nullptr_t) const {
 		return std::get_if<Literal>(&item_);
