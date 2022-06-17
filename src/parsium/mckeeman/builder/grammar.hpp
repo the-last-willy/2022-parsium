@@ -17,6 +17,18 @@ class Grammar {
 public:
 	using Traits = Traits;
 
+	Grammar() = default;
+
+	Grammar(const Grammar& g) = delete;
+	Grammar(Grammar&& g) = delete;
+
+	Grammar& operator=(const Grammar& g) = delete;
+	Grammar& operator=(Grammar&&) = delete;
+
+	~Grammar() = default;
+
+	//
+
 	auto rules() const -> const std::deque<Rule>&;
 	auto rules() -> std::deque<Rule>&;
 

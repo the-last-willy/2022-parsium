@@ -21,10 +21,25 @@ class Alternative {
 	std::deque<Item> items_;
 
 public:
+	//
+
+	Alternative() = delete;
+
 	explicit
 	Alternative(Rule& rule)
-	: rule_(&rule)
+		: rule_(&rule)
 	{}
+
+	Alternative(const Alternative& g) = delete;
+	Alternative(Alternative&& g) = delete;
+
+	Alternative& operator=(const Alternative& g) = delete;
+	Alternative& operator=(Alternative&&) = delete;
+
+	~Alternative() = default;
+
+	//
+
 
 	auto items() const -> const std::deque<Item>&;
 	auto items() -> std::deque<Item>&;

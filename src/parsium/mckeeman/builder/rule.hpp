@@ -30,13 +30,32 @@ class Rule {
 public:
 	using Traits = Traits;
 
+	//
+
+	Rule() = delete;
+
+	explicit
+	Rule(Grammar& g)
+	: grammar_(&g)
+	{}
+
+	Rule(const Rule& g) = delete;
+	Rule(Rule&& g) = delete;
+
+	Rule& operator=(const Rule& g) = delete;
+	Rule& operator=(Rule&&) = delete;
+
+	~Rule() = default;
+
+	//
+
 	Rule(Grammar& grammar, Name n)
 	: grammar_(&grammar)
 	, name_(std::move(n))
 	{}
 
-	auto alternatives() const;
-	auto alternatives();
+	auto alternatives() const -> const std::deque<Alternative>&;
+	auto alternatives() -> std::deque<Alternative>&;
 	auto grammar() const -> const Grammar&;
 	auto grammar() -> Grammar&;
 	auto name() const -> const Name&;
