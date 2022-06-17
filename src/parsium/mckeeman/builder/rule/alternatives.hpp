@@ -8,12 +8,12 @@ namespace mckeeman {
 namespace builder {
 
 inline
-auto Rule::alternatives() const {
+const std::deque<Alternative>& Rule::alternatives() const {
 	return alternatives_;
 }
 
 inline
-auto Rule::alternatives() {
+std::deque<Alternative>& Rule::alternatives() {
 	return alternatives_;
 }
 
