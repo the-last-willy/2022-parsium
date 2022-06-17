@@ -5,6 +5,8 @@
 #include "../name.hpp"
 #include "../rule.hpp"
 
+#include <parsium/common/exception/precondition_violation.hpp>
+#include <parsium/common/tag/throw.hpp>
 #include <parsium/common/tag/undefined_behaviour.hpp>
 
 namespace parsium {
@@ -20,6 +22,16 @@ const Rule_ auto* rule_or(const Grammar_ auto& g, const Name_ auto& n, decltype(
 		}
 	}
 	return result;
+}
+
+inline
+const Rule_ auto& rule_or(const Grammar_ auto& g, const Name_ auto& n, decltype(_throw)) {
+	auto result = rule_or(g, n, nullptr);
+	if(result) {
+		return *result;
+	} else {
+		throw PreconditionViolation();
+	}
 }
 
 inline
