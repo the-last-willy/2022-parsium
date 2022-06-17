@@ -60,3 +60,13 @@ int main() {
 //		std::cout << "> " << std::flush;
 //	}
 }
+
+int main() {
+	try {
+
+	} catch(parsium::Exception) {
+
+	} catch(...) {
+		std::cerr << "Unhandled exception." << std::endl; 
+	}
+}
