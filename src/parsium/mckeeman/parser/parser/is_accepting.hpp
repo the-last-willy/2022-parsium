@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parser.hpp"
+#include "parsium/mckeeman/parser/parser.hpp"
 #include "parsium/mckeeman/parser/multi_head/is_accepting.hpp"
 
 namespace parsium {

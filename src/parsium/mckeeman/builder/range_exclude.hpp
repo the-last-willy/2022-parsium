@@ -16,7 +16,7 @@ struct RangeExclude {
 
 inline
 RangeExclude range_exclude(Range r) {
-	return RangeExclude({r});
+	return RangeExclude({r, {}});
 }
 
 }}}
