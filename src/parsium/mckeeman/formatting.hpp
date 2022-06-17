@@ -58,8 +58,6 @@ std::string to_string(const builder::RangeExclude& re) {
 	return result.str();
 }
 
-
-
 struct LiteralFormatter {
 	std::string operator()(const builder::Characters& cs) const {
 		return to_string(cs);
@@ -119,7 +117,7 @@ std::string to_string(const builder::Rule& r) {
 	auto result = std::stringstream();
 	result << name(r).string << "\n";
 	if(r.does_accept_nothing()) {
-		result << "\t" << "\"\"\n";
+		result << "\t\"\"\n";
 	}
 	for(auto& alternative : alternatives(r)) {
 		result << to_string(alternative);
