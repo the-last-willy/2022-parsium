@@ -7,7 +7,7 @@ namespace mckeeman {
 
 inline
 bool is_halted(const parser::Parser& p) {
-	return p.multi_head.heads.empty();
+	return p.multi_head_.heads.empty();
 }
 
 }}

@@ -14,20 +14,26 @@ namespace parser {
 
 // using ParserListener = std::function<void(ParserMessage)>;
 
-struct Parser {
-	builder::Grammar grammar;
-	MultiHead multi_head;
-//	ParserListener listener;
+/**
+ * \section Invariants
+ * - `grammar_ != nullptr`
+ */
+class Parser {
+	const builder::Grammar* grammar_;
+
+public:
+	MultiHead multi_head_;
+
+	explicit
+	Parser(const builder::Rule& r)
+	: grammar_(&mckeeman::grammar(r))
+	{
+		multi_head_ = multi_head(grammar(), r);
+	}
+
+	auto grammar() const -> const builder::Grammar& {
+		return *grammar_;
+	}
 };
-
-// Pseudo ctor.
-
-inline
-Parser parser(builder::Grammar g, const builder::Name& rule) {
-	auto parser_ = Parser();
-	parser_.grammar = std::move(g);
-	parser_.multi_head = multi_head(parser_.grammar, *rule_or(parser_.grammar, rule, nullptr));
-	return parser_;
-}
 
 }}}

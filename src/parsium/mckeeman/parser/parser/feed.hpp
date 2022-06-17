@@ -29,13 +29,13 @@ MultiHead fed(parser::Parser& p, const Head& h, char symbol) {
 				}
 			}
 		} else if(auto name = name_or(item, nullptr)) {
-			auto& rule = mckeeman::rule_or(p.grammar, *name, UB);
+			auto& rule = mckeeman::rule_or(p.grammar(), *name, UB);
 			for(auto& alternative : alternatives(rule)) {
 				auto nested = mckeeman::nested(h, alternative);
-				unify(result, fed(p.grammar, nested, symbol));
+				unify(result, fed(p.grammar(), nested, symbol));
 			}
-			if(is_accepting(p.grammar, rule)) {
-				unify(result, fed(p.grammar, moved_to_next_item(h), symbol));
+			if(is_accepting(p.grammar(), rule)) {
+				unify(result, fed(p.grammar(), moved_to_next_item(h), symbol));
 			}
 		}
 		return result;
@@ -46,7 +46,7 @@ inline
 MultiHead fed(parser::Parser& p, MultiHead& mh, char symbol) {
 	auto result = MultiHead();
 	for(auto& head : mh.heads) {
-		unify(result, fed(p.grammar, head, symbol));
+		unify(result, fed(p.grammar(), head, symbol));
 	}
 	return result;
 }
@@ -54,9 +54,9 @@ MultiHead fed(parser::Parser& p, MultiHead& mh, char symbol) {
 inline
 void feed(parser::Parser& p, char symbol) {
 	auto multi_head = MultiHead();
-	multi_head.base_rule = p.multi_head.base_rule;
-	unify(multi_head, fed(p.grammar, p.multi_head, symbol));
-	p.multi_head = std::move(multi_head);
+	multi_head.base_rule = p.multi_head_.base_rule;
+	unify(multi_head, fed(p.grammar(), p.multi_head_, symbol));
+	p.multi_head_ = std::move(multi_head);
 }
 
 }}

@@ -8,7 +8,7 @@ namespace mckeeman {
 
 inline
 bool is_accepting(const parser::Parser& p) {
-	return is_accepting(p.grammar, p.multi_head);
+	return is_accepting(p.grammar(), p.multi_head_);
 }
 
 }}
