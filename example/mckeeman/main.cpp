@@ -38,17 +38,15 @@ std::string formatted(const builder::Grammar& g, const MultiHead& mh) {
 std::string formatted(const parser::Parser& p) {
 	auto ss = std::stringstream();
 	ss << "is_accepting = " << is_accepting(p) << ",\n";
-	ss << formatted(p.grammar, p.multi_head);
+	ss << formatted(p.grammar(), p.multi_head_);
 	return ss.str();
 }
 
-int main() {
+void throwing_main() {
 	auto format = format::json();
 
-	std::cout << formatting::to_string(format) << std::endl;
-
-	// auto json_parser = parser::parser(format, builder::Name("json"));
-//	std::cout << format(json_parser) << std::endl;
+	auto json_parser = parser::Parser(rule_or(*format, builder::Name("json"), _throw));
+	std::cout << formatted(json_parser) << std::endl;
 //
 //	std::cout << "> " << std::flush;
 //	for(int c = std::getchar(); c != EOF; c = std::getchar()) {
@@ -63,10 +61,13 @@ int main() {
 
 int main() {
 	try {
-
+		throwing_main();
+		return 0;
 	} catch(parsium::Exception) {
-
+		std::cerr << "Unhandled Parsium exception." << std::endl;
+		return -1;
 	} catch(...) {
-		std::cerr << "Unhandled exception." << std::endl; 
+		std::cerr << "Unhandled exception." << std::endl;
+		return -1;
 	}
 }
