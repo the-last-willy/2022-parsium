@@ -2,13 +2,16 @@
 
 #include <parsium/mckeeman/builder.hpp>
 
+#include <memory>
+
 namespace format {
 
 using namespace parsium::mckeeman;
 
 inline
-builder::Grammar json() {
-	auto grammar =  builder::Grammar();
+std::unique_ptr<builder::Grammar> json() {
+	auto result = std::make_unique<builder::Grammar>();
+	auto& grammar =  *result;
 
 	auto& json = grammar.add_rule("json");
 	auto& value = grammar.add_rule("value");
@@ -307,7 +310,7 @@ builder::Grammar json() {
 		}
 	}
 
-	return grammar;
+	return result;
 }
 
 }
