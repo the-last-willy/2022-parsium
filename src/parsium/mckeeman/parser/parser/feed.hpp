@@ -15,18 +15,8 @@ MultiHead fed(parser::Parser& p, const Head& h, char symbol) {
 		auto& top = top_or(h, UB);
 		auto& item = current_item(top);
 		if(auto literal = literal_or(item, nullptr)) {
-			if(auto characters = characters_or(*literal, nullptr)) {
-				if(characters->content[h.character_index] == symbol) {
-					unify(result, moved_to_next_character(h));
-				}
-			} else if(auto range_exclude = range_exclude_or(*literal, nullptr)) {
-				if(does_accept(*range_exclude, symbol)) {
-					unify(result, moved_to_next_character(h));
-				}
-			} else if(auto singleton = singleton_or(*literal, nullptr)) {
-				if(does_accept(*singleton, symbol)) {
-					unify(result, moved_to_next_character(h));
-				}
+			if(does_accept(*literal, h.character_index, symbol)) {
+				unify(result, moved_to_next_character(h));
 			}
 		} else if(auto name = name_or(item, nullptr)) {
 			auto& rule = mckeeman::rule_or(p.grammar(), *name, UB);
