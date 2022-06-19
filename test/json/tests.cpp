@@ -12,8 +12,9 @@ using namespace parsium::mckeeman;
 
 TEST_CASE("json") {
 	SECTION("rule: \"json\"") {
-		auto parser = parsium::mckeeman::parser::parser(
-			format::json(), parsium::mckeeman::builder::Name("json"));
+		auto json = format::json();
+		auto parser = parsium::mckeeman::parser::Parser(
+			rule_or(*json, parsium::mckeeman::builder::Name("json"), _throw));
 		auto index = 1;
 		SECTION("#" + std::to_string(index++)) {
 			auto input = std::string_view("{}");
