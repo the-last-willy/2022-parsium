@@ -27,4 +27,10 @@ bool does_accept(const RangeExclude& re, char c) {
 	}
 }
 
+inline
+bool does_accept(const RangeExclude& re, std::size_t index, char c) {
+	(void) index;
+	return does_accept(re, c);
+}
+
 }}}
