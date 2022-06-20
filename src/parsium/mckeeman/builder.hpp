@@ -33,3 +33,20 @@ static_assert(Rule_<Rule>);
 static_assert(Traits_<Traits>);
 
 }}}
+
+/*******************************************************************************
+// Template file.
+
+#pragma once
+
+namespace parsium {
+namespace mckeeman {
+namespace builder {
+
+class Listener {
+
+};
+
+}}}
+
+*******************************************************************************/
