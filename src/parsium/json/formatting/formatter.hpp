@@ -20,10 +20,16 @@ public:
 	std::stringstream string;
 
 	void indent() {
+		for(std::size_t i = 0; i < indent_level; ++i) {
+			string << "  ";
+		}
+	}
+
+	void increase_indent() {
 		indent_level += 1;
 	}
 
-	void unindent() {
+	void decrease_indent() {
 		indent_level -= 1;
 	}
 };
@@ -48,18 +54,42 @@ struct ElementFormatter {
 	}
 };
 
-void format(Formatter& f, const building::Array& a) {
-	f.string << "-array-";
+inline
+void format(Formatter& f, const building::Element& e) {
+	e.dispatch_to(ElementFormatter(f));
 }
 
+inline
+void format(Formatter& f, const building::Array& a) {
+	f.string << "[";
+	auto& elements = a.elements();
+	if(!elements.empty()) {
+		f.string << "\n";
+		f.increase_indent();
+		f.indent();
+		format(f, elements[0]);
+		for(std::size_t i = 1; i < size(elements); ++i) {
+			f.string << ",\n";
+			f.indent();
+			format(f, elements[i]);
+		}
+		f.decrease_indent();
+		f.string << "\n";
+	}
+	f.string << "]";
+}
+
+inline
 void format(Formatter& f, const building::Object& o) {
 	f.string << "-object-";
 }
 
+inline
 void format(Formatter& f, const building::Number& n) {
 	f.string << n.representation();
 }
 
+inline
 void format(Formatter& f, const building::String& s) {
 	f.string << "-string-";
 }
@@ -69,7 +99,7 @@ void format(Formatter& f, const building::String& s) {
 inline
 void format(Formatter& f, const building::Json& j) {
 	if(auto element = j.element_or(nullptr)) {
-		element->dispatch_to(ElementFormatter(f));
+		format(f, *element);
 	}
 }
 
