@@ -3,6 +3,7 @@
 #include "parsium/json/building/element.hpp"
 
 #include <parsium/common/exception/precondition_violation.hpp>
+#include <parsium/common/tag/shallow.hpp>
 
 #include <optional>
 #include <type_traits>
@@ -27,6 +28,8 @@ class Json {
 	std::optional<Element> element_;
 
 public:
+	auto is_valid(decltype(shallow)) const -> bool;
+
 	auto element_or(decltype(nullptr)) const -> const Element* {
 		if(element_) {
 			return &*element_;

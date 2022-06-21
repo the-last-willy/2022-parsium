@@ -3,6 +3,7 @@
 #include "parsium/json/building/string.hpp"
 
 #include <parsium/common/exception/precondition_violation.hpp>
+#include <parsium/common/tag/shallow.hpp>
 
 #include <string>
 #include <variant>
@@ -21,6 +22,8 @@ public:
 	{
 		assign(f);
 	}
+
+	auto is_valid(decltype(shallow)) const -> bool;
 
 	void assign(float f) {
 		data_ = f;
