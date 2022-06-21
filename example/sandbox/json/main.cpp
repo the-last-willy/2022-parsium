@@ -9,9 +9,14 @@ using namespace parsium::json::building;
 
 int main() {
 	auto json = Json();
-	auto& number = json.create<Number>();
-	number.assign(1.f);
+	auto& array = json.create<Array>();
+	for(int i = 0; i < 5; ++i) {
+		auto& element = array.create_at_end();
+		auto& number = element.construct<Number>();
+		number = float(i);
+	}
+
 	auto formatter = formatting::Formatter();
-	format(formatter, number);
+	format(formatter, json);
 	std::cout << formatter.string.str() << std::endl;
 }
