@@ -5,6 +5,8 @@
 #include "parsium/json/building/object.hpp"
 #include "parsium/json/building/string.hpp"
 
+#include <parsium/common/tag/shallow.hpp>
+
 #include <variant>
 
 namespace parsium {
@@ -12,29 +14,39 @@ namespace json {
 namespace building {
 
 class Element {
+	// std::variant<std::monostate, Array, Number, Object, String> content_;
 	std::variant<Array, Number, Object, String> content_;
 
 public:
+	Element() = default;
+
 	Element(Array a)
 	: content_(std::move(a))
 	{}
 
 	Element(Number n)
-		: content_(std::move(n))
+	: content_(std::move(n))
 	{}
 
 	Element(Object o)
-		: content_(std::move(o))
+	: content_(std::move(o))
 	{}
 
 	Element(String s)
-		: content_(std::move(s))
+	: content_(std::move(s))
 	{}
 
-	template<typename F>
-	auto dispatch_to(F&&) const -> decltype(auto);
-	template<typename F>
-	auto dispatch_to(F&&) -> decltype(auto);
+	auto is_valid(decltype(shallow)) const -> bool;
+
+	template<typename Visitor>
+	auto dispatch_to(Visitor&&) const -> decltype(auto);
+	template<typename Visitor>
+	auto dispatch_to(Visitor&&) -> decltype(auto);
+
+	template<typename T>
+	auto construct() -> T& {
+		return content_.emplace<T>();
+	}
 };
 
 template<typename F>
