@@ -38,6 +38,7 @@ public:
 
 void format(Formatter& f, const building::Array& a);
 void format(Formatter& f, const building::Object& o);
+void format(Formatter& f, const building::Member& m);
 void format(Formatter& f, const building::Number& n);
 void format(Formatter& f, const building::String& s);
 
@@ -81,7 +82,29 @@ void format(Formatter& f, const building::Array& a) {
 
 inline
 void format(Formatter& f, const building::Object& o) {
-	f.string << "-object-";
+	f.string << "{";
+	auto& members = o.members();
+	if(!members.empty()) {
+		f.string << "\n";
+		f.increase_indent();
+		f.indent();
+		format(f, members[0]);
+		for(std::size_t i = 1; i < size(members); ++i) {
+			f.string << ",\n";
+			f.indent();
+			format(f, members[i]);
+		}
+		f.decrease_indent();
+		f.string << "\n";
+	}
+	f.string << "}";
+}
+
+inline
+void format(Formatter& f, const building::Member& m) {
+	format(f, m.string());
+	f.string << ": ";
+	format(f, m.element());
 }
 
 inline
