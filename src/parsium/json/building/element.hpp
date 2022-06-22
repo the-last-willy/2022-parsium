@@ -28,7 +28,7 @@ public:
 	: content_(std::move(n))
 	{}
 
-	Element(Object o)
+	Element(Object&& o)
 	: content_(std::move(o))
 	{}
 
