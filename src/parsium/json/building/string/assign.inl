@@ -7,8 +7,8 @@ namespace json {
 namespace building {
 
 inline
-bool String::is_valid(decltype(shallow)) const {
-	return true;
+void String::assign(const char* c) {
+	characters_ = c;
 }
 
 }}}
