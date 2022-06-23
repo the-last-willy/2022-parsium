@@ -9,7 +9,7 @@ namespace building {
 
 inline
 Member& Object::create_member_at_end() {
-
+	return members_.emplace_back();
 }
 
 }}}
