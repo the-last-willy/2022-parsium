@@ -64,7 +64,9 @@ inline
 void format(Formatter& f, const building::Array& a) {
 	f.string << "[";
 	auto& elements = a.elements();
-	if(!elements.empty()) {
+	if(elements.empty()) {
+		f.string << "]";
+	} else {
 		f.string << "\n";
 		f.increase_indent();
 		f.indent();
@@ -74,17 +76,24 @@ void format(Formatter& f, const building::Array& a) {
 			f.indent();
 			format(f, elements[i]);
 		}
-		f.decrease_indent();
 		f.string << "\n";
+		f.decrease_indent();
+		f.indent();
+		f.string << "]";
 	}
-	f.string << "]";
 }
 
 inline
-void format(Formatter& f, const building::Object& o) {
+void format(Formatter& f, const building::Object& o)
+{
 	f.string << "{";
-	auto& members = o.members();
-	if(!members.empty()) {
+	auto &members = o.members();
+	if(members.empty())
+	{
+		f.string << "}";
+	}
+	else
+	{
 		f.string << "\n";
 		f.increase_indent();
 		f.indent();
@@ -94,10 +103,11 @@ void format(Formatter& f, const building::Object& o) {
 			f.indent();
 			format(f, members[i]);
 		}
-		f.decrease_indent();
 		f.string << "\n";
+		f.decrease_indent();
+		f.indent();
+		f.string << "}";
 	}
-	f.string << "}";
 }
 
 inline
@@ -114,7 +124,7 @@ void format(Formatter& f, const building::Number& n) {
 
 inline
 void format(Formatter& f, const building::String& s) {
-	f.string << "-string-";
+	f.string << "\"" << s.characters() << "\"";
 }
 
 //
