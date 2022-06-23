@@ -16,7 +16,21 @@ int main() {
 //		number = float(i);
 //	}
 	auto& object = json.create<Object>();
-	
+	{
+		auto& member = object.create_member_at_end();
+		member.string().assign("ok");
+		{
+			auto& array = member.element().construct<Array>();
+			auto& e0 = array.create_at_end();
+			e0.construct<Number>().assign(1.f);
+			auto& e1 = array.create_at_end();
+			e1.construct<String>().assign("nique");
+			auto& e2 = array.create_at_end();
+			e2.construct<Object>();
+			auto& e3 = array.create_at_end();
+			e3.construct<Array>();
+		}
+	}
 
 	auto formatter = formatting::Formatter();
 	format(formatter, json);
