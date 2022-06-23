@@ -47,16 +47,16 @@ void throwing_main() {
 
 	auto json_parser = parser::Parser(rule_or(*format, builder::Name("json"), _throw));
 	std::cout << formatted(json_parser) << std::endl;
-//
-//	std::cout << "> " << std::flush;
-//	for(int c = std::getchar(); c != EOF; c = std::getchar()) {
-//		if(c == '\n') {
-//			continue;
-//		}
-//		feed(json_parser, char(c));
-//		std::cout << format(json_parser) << std::endl;
-//		std::cout << "> " << std::flush;
-//	}
+
+	std::cout << "> " << std::flush;
+	for(int c = std::getchar(); c != '!'; c = std::getchar()) {
+		if(c == '\n') {
+			continue;
+		}
+		feed(json_parser, char(c));
+		std::cout << formatted(json_parser) << std::endl;
+		std::cout << "> " << std::flush;
+	}
 }
 
 int main() {
