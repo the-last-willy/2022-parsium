@@ -1,0 +1,13 @@
+#error "DO NOT INCLUDE THIS FILE."
+
+////////////////////////////////////////////////////////////////////////////////
+// Template file.
+
+/*
+#pragma once
+
+namespace parsium {
+
+}
+
+*/
