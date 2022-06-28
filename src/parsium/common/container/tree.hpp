@@ -1,10 +1,3 @@
 #pragma once
 
-namespace parsium {
-
-class Tree {
-public:
-
-};
-
-}
+#include "parsium/common/container/tree/tree.hpp"
