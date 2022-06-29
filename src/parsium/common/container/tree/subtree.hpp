@@ -45,8 +45,7 @@ public:
 	{}
 
 	auto connections() const -> SubtreeConnections<T>;
-	auto data() const -> T&;
-	auto node() const -> TreeNodeIndex { return node_; }
+	auto index() const -> TreeNodeIndex { return node_; }
 	auto tree() const -> QualifiedTree&;
 };
 
@@ -56,8 +55,13 @@ auto subtree(const Tree<T>& t, TreeNodeIndex i) -> Subtree<const T> {
 }
 
 template<typename T>
-auto subtree(Tree<T>& t, TreeNodeIndex i) -> Subtree<const T> {
-	return Subtree<const T>(t, i);
+auto subtree(Tree<T>& t, TreeNodeIndex i) -> Subtree<T> {
+	return Subtree<T>(t, i);
+}
+
+template<typename T>
+auto parent_or(const Subtree<T>& s, decltype(self)) -> Subtree<T> {
+
 }
 
 }
