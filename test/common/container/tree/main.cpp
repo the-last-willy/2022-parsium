@@ -9,17 +9,24 @@ TEST_CASE("Default ctor") {
 
 TEST_CASE("Empty tree") {
 	auto tree = parsium::Tree<int>();
+
+	SECTION("The tree has no root") {
+		REQUIRE(!tree.root_or(nullptr));
+	}
 }
 
 TEST_CASE("Root tree") {
 	auto tree = parsium::Tree<int>();
 	auto root = tree.construct_root_or(parsium::UB, 1);
 
+	SECTION("The root has no child") {
+
+	}
 	SECTION("The root has no parent") {
-		REQUIRE(parent_or(root, parsium::self) == root.index())
+		REQUIRE(!root.parent_or(nullptr));
 	}
 }
 
-TEST_CASE("Mutable subtree to const subtree conversion") {
+TEST_CASE("Mutable tree_node to const tree_node conversion") {
 
 }
