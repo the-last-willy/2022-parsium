@@ -25,12 +25,17 @@ public:
 	}
 };
 
-inline
-bool is_valid(TreeNodeIndex i) {
-	return i.value() != invalid_tree_node_index_value;
-}
-
 constexpr auto invalid_tree_node_index
 = TreeNodeIndex(invalid_tree_node_index_value);
+
+inline
+bool operator==(const TreeNodeIndex& i0, const TreeNodeIndex& i1) {
+	return i0.value() == i1.value();
+}
+
+inline
+bool is_valid(TreeNodeIndex i) {
+	return i != invalid_tree_node_index;
+}
 
 }

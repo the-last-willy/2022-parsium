@@ -1,9 +1,10 @@
 #pragma once
 
-#include "parsium/common/container/tree/node.hpp"
-#include "parsium/common/container/tree/subtree.hpp"
+#include "parsium/common/container/tree/internal/node.hpp"
+#include "parsium/common/container/tree/internal/tree.hpp"
 
 #include <parsium/common/tag/undefined_behaviour.hpp>
+#include <parsium/common/typing/is_const.hpp>
 
 #include <vector>
 
@@ -11,45 +12,33 @@ namespace parsium {
 
 template<typename T>
 class Tree {
-	std::vector<TreeNode<T>> nodes_;
-	TreeNodeIndex root_ = invalid_tree_node_index;
+	static_assert( !is_type_const<T> );
+
+	TreeInternals<T> internals_;
 
 public:
-
 	// Access.
 
-	auto data_or(decltype(UB), TreeDataIndex i) const -> const T& {
-		auto node_index = TreeNodeIndex(i.value());
-		return nodes_[node_index.value()].data;
+	auto root_or(decltype(nullptr)) const -> TreeNodePtr<const T> {
+		return TreeNodePtr<const T>(internals_, internals_.root_id_);
 	}
 
-	auto data_or(decltype(UB), TreeDataIndex i) -> T& {
-		auto node_index = TreeNodeIndex(i.value());
-		return nodes_[node_index.value()].data;
-	}
-
-	auto root_index() const -> TreeNodeIndex {
-		return root_;
-	}
-
-	auto subtree_or(decltype(UB), TreeNodeIndex i) const -> Subtree<const T> {
-		return Subtree(*this, i);
-	}
-
-	auto subtree_or(decltype(UB), TreeNodeIndex i) -> Subtree<T> {
-		return Subtree(*this, i);
+	auto root_or(decltype(nullptr)) -> TreeNodePtr<T> {
+		return TreeNodePtr<T>(internals_, internals_.root_id_);
 	}
 
 	//
 
-	auto construct_root_or(decltype(UB), T&& data) -> Subtree<T> {
-		root_ = TreeNodeIndex(nodes_.size());
-		nodes_.push_back(TreeNode(root_, std::move(data)));
-		return subtree(*this, root_);
+	auto construct_root_or(decltype(UB), T&& data) -> TreeNodeRef<T> {
+		internals_.root_id_ = size(internals_.nodes_);
+		internals_.nodes_.push_back(
+			TreeNodeInternals<T>(invalid_tree_node_id, std::move(data)));
+		return TreeNodeRef<T>(internals_, internals_.nodes_.back());
 	}
 
 	auto destroy_root() -> void {
-		nodes_.clear();
+		internals_.nodes_.clear();
+		internals_.root_id_ = invalid_tree_node_id;
 	}
 };
 
