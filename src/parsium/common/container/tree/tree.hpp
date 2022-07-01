@@ -29,11 +29,18 @@ public:
 
 	//
 
+	auto construct_root_or(decltype(UB), const T& data) -> TreeNodeRef<T> {
+		internals_.root_id_ = size(internals_.nodes_);
+		internals_.nodes_.push_back(
+			TreeNodeInternals<T>(invalid_tree_node_id, T(data)));
+		return TreeNodeRef<T>(internals_, internals_.root_id_);
+	}
+
 	auto construct_root_or(decltype(UB), T&& data) -> TreeNodeRef<T> {
 		internals_.root_id_ = size(internals_.nodes_);
 		internals_.nodes_.push_back(
 			TreeNodeInternals<T>(invalid_tree_node_id, std::move(data)));
-		return TreeNodeRef<T>(internals_, internals_.nodes_.back());
+		return TreeNodeRef<T>(internals_, internals_.root_id_);
 	}
 
 	auto destroy_root() -> void {
