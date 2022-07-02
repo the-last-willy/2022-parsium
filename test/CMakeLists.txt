@@ -20,7 +20,7 @@ target_include_directories(parsium_test_common_container_tree
 
 target_sources(parsium_test_common_container_tree
 	PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/common/container/tree/main.cpp)
+	${CMAKE_CURRENT_SOURCE_DIR}/common/container/naive_tree/main.cpp)
 
 catch_discover_tests(parsium_test_common_container_tree)
 
