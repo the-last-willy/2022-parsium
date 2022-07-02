@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace parsium::inline common {
 
 /**
@@ -31,7 +33,8 @@ public:
 	}
 
 	auto operator->() -> T* {
-		return &data_;
+		// Ignores overloaded address-of operator.
+		return std::addressof(data_);
 	}
 };
 
