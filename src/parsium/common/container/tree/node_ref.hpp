@@ -43,10 +43,21 @@ public:
 	auto data() const -> T&;
 	auto parent_or(decltype(nullptr)) const -> TreeNodePtr<T>;
 
-	auto add_child(T t) const -> TreeNodeRef<T> {
+	auto add_child(T t) -> TreeNodeRef<T> {
 		auto child_id = size(tree_->nodes_);
+		node_->connections_.push_back(child_id);
+		// Invalidates `node_`.
 		tree_->nodes_.push_back(TreeNodeInternals<T>(node_id_, std::move(t)));
+		// Updates `node_`.
+		node_ = tree_->nodes[node_id_];
 		return TreeNodeRef<T>(*tree_, child_id);
+	}
+
+	/**
+	 * \pre `i < child_count()`
+	 */
+	auto remove_child_or(decltype(UB), std::size_t i) -> void {
+
 	}
 };
 

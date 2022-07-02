@@ -9,6 +9,8 @@ namespace parsium {
 template<typename T>
 struct TreeInternals {
 	std::vector<TreeNodeInternals<T>> nodes_;
+	std::vector<std::size_t> unused_nodes_;
+
 	std::size_t root_id_ = invalid_tree_node_id;
 };
 

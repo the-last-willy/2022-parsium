@@ -1,6 +1,7 @@
 #pragma once
 
 #include "parsium/common/container/tree/internal/tree.hpp"
+#include "parsium/common/container/tree/node_ref.hpp"
 
 #include <parsium/common/typing/const_if.hpp>
 #include <parsium/common/typing/is_const.hpp>
@@ -42,9 +43,6 @@ public:
 
 	auto operator*() const -> TreeNodeRef<T>;
 	auto operator->() const -> FakePtr<TreeNodeRef<T>>;
-
-	auto f() const -> FakePtr<TreeNodeRef<T>>;
-
 };
 
 }
