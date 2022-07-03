@@ -20,36 +20,36 @@ public:
 	, data_(std::move(data))
 	{}
 
-	auto add_child(T data) -> NaiveTreeNode& {
+	auto add_child(T data) -> NaiveTreeNode* {
 		children_.push_back(std::unique_ptr<NaiveTreeNode>(
 			new NaiveTreeNode(this, std::move(data))));
-		return *children_.back();
+		return children_.back().get();
 	}
 
 	/**
 	 * \pre `i < child_count()`
 	 */
-	auto child(std::size_t i) const -> const NaiveTreeNode& {
-		return *children_[i];
+	auto child(std::size_t i) const -> const NaiveTreeNode* {
+		return children_[i];
 	}
 
 	/**
 	 * \pre `i < child_count()`
 	 */
-	auto child(std::size_t i) -> NaiveTreeNode& {
-		return *children_[i];
+	auto child(std::size_t i) -> NaiveTreeNode* {
+		return children_[i].get();
 	}
 
 	auto child_count() const -> std::size_t {
 		return size(children_);
 	}
 
-	auto data() const -> const T& {
-		return data_;
+	auto data() const -> const T* {
+		return &data_;
 	}
 
-	auto data() -> T& {
-		return data_;
+	auto data() -> T* {
+		return &data_;
 	}
 
 	auto has_parent() const -> bool {
@@ -59,15 +59,15 @@ public:
 	/**
 	 * \pre `has_parent()`
 	 */
-	auto parent() const -> const NaiveTreeNode& {
-		return *parent_;
+	auto parent() const -> const NaiveTreeNode* {
+		return parent_;
 	}
 
 	/**
 	 * \pre `has_parent()`
 	 */
-	auto parent() -> NaiveTreeNode& {
-		return *parent_;
+	auto parent() -> NaiveTreeNode* {
+		return parent_;
 	}
 
 	/**
