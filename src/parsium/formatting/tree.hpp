@@ -7,6 +7,30 @@
 
 namespace parsium {
 
+std::string escaped(std::string s) {
+	auto ret = std::string();
+	for(auto c : s) {
+		switch(c) {
+			case '"': {
+				ret += "\\\"";
+				break;
+			}
+			case '\n': {
+				ret += "\\n";
+				break;
+			}
+			case '\r': {
+				ret += "\\r";
+				break;
+			}
+			default: {
+				ret += c;
+			}
+		}
+	}
+	return ret;
+}
+
 class TreeFormatter {
 public:
     int indent_level_ = 0;
@@ -14,26 +38,32 @@ public:
     std::stringstream string_;
 
     void indent() {
-        indent_level_ += 1;
-        indentation_ = "";
-        for(int i = 0; i < indent_level_; ++i) {
-            indentation_ += "  ";
-        }
+		auto n = size(indentation_);
+		if(indent_level_ > 0) {
+			indentation_[n - 2] = '|';
+			indentation_[n - 1] = ' ';
+		}
+		indentation_.resize(n + 2);
+		indentation_[n + 0] = '+';
+		indentation_[n + 1] = ' ';
+		indent_level_ += 1;
     }
 
     void unindent() {
         indent_level_ -= 1;
-        indentation_ = "";
-        for(int i = 0; i < indent_level_; ++i) {
-            indentation_ += "  ";
-        }
+		auto n = size(indentation_);
+		indentation_.resize(n - 2);
+		if(n >= 4) {
+			indentation_[n - 4] = '+';
+			indentation_[n - 3] = ' ';
+		}
     }
 };
 
 void format(TreeFormatter& f, const MckeemanRule& r) {
     f.string_ << f.indentation_ << "\"" << r.rule_ << "\"";
     if(!r.data_.empty()) {
-        f.string_ << " = " << r.data_;
+        f.string_ << " = \"" << escaped(r.data_) << "\"";
     }
     f.string_ << "\n";
     f.indent();
