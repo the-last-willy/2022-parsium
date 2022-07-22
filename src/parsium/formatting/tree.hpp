@@ -1,5 +1,6 @@
 #pragma once
 
+#include "parsium/mckeeman_node.hpp"
 #include "parsium/mckeeman_tree.hpp"
 
 #include <sstream>
@@ -82,6 +83,45 @@ void format(TreeFormatter& f, const MckeemanRule& r) {
         }
     }
     f.unindent();
+}
+
+
+void format(TreeFormatter&, const MckeemanNode&);
+void format_item(TreeFormatter&, const MckeemanNode&);
+
+
+inline
+void format_item(TreeFormatter& f, const MckeemanNode& n) {
+	f.string_ << f.indentation_ << "\"" << n.name_ << "\"";
+	if(has_literal(n)) {
+		f.string_ << " = \"" << escaped(*literal(n)) << "\"";
+	}
+	f.string_ << "\n";
+
+	f.indent();
+
+	for(int ai = 0; ai < size(n.alternatives_); ++ai) {
+		auto& alternative = n.alternatives_[ai];
+		if(size(n.alternatives_) > 1) {
+			f.string_ << f.indentation_ << "ALT " << ai << "\n";
+			f.indent();
+		}
+		format(f, alternative);
+		//		for(auto it = next(n, ai); it; it = next(*it, ai)) {
+		//			format(f, *it);
+		//		}
+		if(size(n.alternatives_) > 1) {
+			f.unindent();
+		}
+	}
+	f.unindent();
+}
+
+inline
+void format(TreeFormatter& f, const MckeemanNode& n) {
+	for(auto item = &n; item != nullptr; item = next(*item, 0)) {
+		format_item(f, *item);
+	}
 }
 
 }

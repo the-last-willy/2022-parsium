@@ -1,6 +1,7 @@
 #include <parsium/formatting/tree.hpp>
 #include <parsium/mckeeman_formatter.hpp>
 #include <parsium/mckeeman_grammar.hpp>
+#include <parsium/mckeeman_node.hpp>
 #include <parsium/parsing_tree.hpp>
 
 #include <iostream>
@@ -8,14 +9,17 @@
 using namespace parsium;
 
 int main() {
-    auto instance = mckeeman_grammar();
-    auto rule = mckeeman_rule_of(instance);
+	auto n = MckeemanNode();
+	assert(is_valid(n));
+	auto a0 = create_alternative_at_end(n);
+	assert(is_valid(n));
 
-    auto f = TreeFormatter();
-    format(f, instance);
-    std::cout << "==INSTANCE==\n\n" << f.string_.str() << "\n\n" << std::flush;
+	create_next_item(n);
+	assert(is_valid(n));
 
-	f = TreeFormatter();
-	format(f, rule);
-	std::cout << "==RULE==\n\n" << f.string_.str() << "\n\n" << std::flush;
+//	std::cout << &n << " " << next(n, 0) << std::endl;
+
+	auto f = TreeFormatter();
+	format(f, n);
+	std::cout << f.string_.str() << std::endl;
 }
