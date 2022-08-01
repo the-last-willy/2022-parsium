@@ -12,12 +12,12 @@ namespace parsium {
 
 void breakpoint();
 
-template<typename T>
-T&& break_on_false(T&& t) {
-	if(!static_cast<bool>(std::forward<T>(t))) {
+inline
+bool breakpoint_on_false(bool b) {
+	if(!b) {
 		breakpoint();
 	}
-	return std::forward<T>(t);
+	return b;
 }
 
 inline
@@ -27,7 +27,9 @@ void breakpoint()
 	__debugbreak();
 }
 #else
-{}
+{
+	// TODO: Clang, GCC.
+}
 #endif
 
 }
