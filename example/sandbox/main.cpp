@@ -1,25 +1,74 @@
-#include <parsium/formatting/tree.hpp>
-#include <parsium/mckeeman_formatter.hpp>
-#include <parsium/mckeeman_grammar.hpp>
-#include <parsium/mckeeman_node.hpp>
-#include <parsium/parsing_tree.hpp>
+#include <parsium/mckeeman/formatting/raw.hpp>
+#include <parsium/mckeeman/kickstarting/grammar.hpp>
+#include <parsium/mckeeman/kickstarting/rules.hpp>
+#include <parsium/mckeeman/storing/node.hpp>
+#include <parsium/mckeeman/storing/validity.hpp>
+#include <parsium/mckeeman/validating/validator.hpp>
+
+#include <parsium/mckeeman/storing/validity.inl>
 
 #include <iostream>
 
 using namespace parsium;
+using namespace parsium::mckeeman;
 
 int main() {
-	auto n = MckeemanNode();
-	assert(is_valid(n));
-	auto a0 = create_alternative_at_end(n);
-	assert(is_valid(n));
+	auto grammar_rules = std::vector<StorageNodeHandle>();
+	for(auto rule : all_mckeeman_rules) {
+		auto r = rule();
+		assert(is_valid(*r));
+		grammar_rules.push_back(std::move(r));
+	}
 
-	create_next_item(n);
-	assert(is_valid(n));
+	auto grammar = mckeeman_grammar_of(grammar_rules);
+	assert(is_valid(*grammar));
 
-//	std::cout << &n << " " << next(n, 0) << std::endl;
+	{
+		auto f = RawFormatter();
+		format(f, *grammar);
+		std::cout << f.stream_.str() << std::endl;
+	}
 
-	auto f = TreeFormatter();
-	format(f, n);
-	std::cout << f.string_.str() << std::endl;
+	auto v = Validator(*grammar);
+//
+//	for(auto rule : all_mckeeman_rules) {
+//		auto r = rule();
+//		assert(is_valid(*r));
+//
+//		{
+//			auto f = RawFormatter();
+//			format(f, *r);
+//			std::cout << f.stream_.str() << std::endl;
+//		}
+//
+//		auto s = std::span<const StorageNodeHandle>(&r, 1);
+//		auto g = mckeeman_grammar_of(s);
+//		assert(is_valid(*g));
+//
+//		{
+//			auto f = RawFormatter();
+//			format(f, *g);
+//			std::cout << f.stream_.str() << std::endl;
+//		}
+//
+//		std::cout << std::string(80, '=') << std::endl;
+//	}
+
+//	auto r = mckeeman_alternatives_rule();
+//	assert(is_valid(*r));
+//
+//	{
+//		auto f = RawFormatter();
+//		format(f, *r);
+//		std::cout << f.stream_.str() << std::endl;
+//	}
+
+//	auto g = mckeeman_rule_of(*r);
+//	assert(is_valid(*g));
+//
+//	{
+//		auto f = RawFormatter();
+//		format(f, *g);
+//		std::cout << f.stream_.str() << std::endl;
+//	}
 }

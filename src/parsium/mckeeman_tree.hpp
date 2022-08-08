@@ -1,9 +1,12 @@
 #pragma once
 
-#include "parsing_tree.hpp"
+#include "mckeeman_node.hpp"
 
+#include <array>
 #include <cassert>
+#include <span>
 #include <string>
+#include <vector>
 
 namespace parsium {
 
@@ -11,253 +14,288 @@ namespace parsium {
 // Helpers.
 
 template<typename T>
-std::vector<T> popped_front(std::vector<T> v) {
-	if(!v.empty()) {
-		v.erase(begin(v));
-	}
+auto popped_front(std::vector<T> v) {
+	v.erase(begin(v));
 	return v;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-MckeemanRule mckeeman_grammar();
+// Grammar.
 
-// Rules.
+MckeemanNode mckeeman_grammar();
 
-// Instances.
+// Rule.
 
-MckeemanRule mckeeman_alternative(const std::vector<MckeemanRule>& items);
-MckeemanRule mckeeman_alternatives(const std::vector<MckeemanAlternative>& as);
-MckeemanRule mckeeman_codepoint(char c);
-MckeemanRule mckeeman_grammar(const std::vector<MckeemanRule>& rules);
-MckeemanRule mckeeman_indentation();
-MckeemanRule mckeeman_item(const MckeemanRule& item);
-MckeemanRule mckeeman_items(const std::vector<MckeemanRule>& items);
-MckeemanRule mckeeman_letter(char);
-MckeemanRule mckeeman_name(const std::string&);
-MckeemanRule mckeeman_newline();
-MckeemanRule mckeeman_nothing(bool does_accept_nothing);
-MckeemanRule mckeeman_range(char lb, char ub);
-MckeemanRule mckeeman_rule(const std::string& name, bool does_accept_nothing, const std::vector<MckeemanAlternative>& alternatives);
-MckeemanRule mckeeman_rules(const std::vector<MckeemanRule>& rules);
-MckeemanRule mckeeman_singleton(char symbol);
-MckeemanRule mckeeman_space();
+MckeemanNode mckeeman_alternative_rule();
+MckeemanNode mckeeman_alternatives_rule();
+MckeemanNode mckeeman_character_rule();
+MckeemanNode mckeeman_characters_rule();
+MckeemanNode mckeeman_codepoint_rule();
+MckeemanNode mckeeman_exclude_rule();
+MckeemanNode mckeeman_grammar_rule();
+MckeemanNode mckeeman_hex_rule();
+MckeemanNode mckeeman_hexcode_rule();
+MckeemanNode mckeeman_indentation_rule();
+MckeemanNode mckeeman_item_rule();
+MckeemanNode mckeeman_items_rule();
+MckeemanNode mckeeman_letter_rule();
+MckeemanNode mckeeman_literal_rule();
+MckeemanNode mckeeman_name_rule();
+MckeemanNode mckeeman_newline_rule();
+MckeemanNode mckeeman_nothing_rule();
+MckeemanNode mckeeman_range_rule();
+MckeemanNode mckeeman_rule_rule();
+MckeemanNode mckeeman_rules_rule();
+MckeemanNode mckeeman_singleton_rule();
+MckeemanNode mckeeman_space_rule();
+
+// Generalization.
+
+MckeemanNode mckeeman_rule_of(const MckeemanNode&);
+
+// Instance.
+
+MckeemanNode mckeeman_alternative(std::vector<MckeemanNode> items);
+MckeemanNode mckeeman_alternatives(std::vector<MckeemanNode> as);
+MckeemanNode mckeeman_codepoint(char c);
+MckeemanNode mckeeman_grammar(std::vector<MckeemanNode> rules);
+MckeemanNode mckeeman_indentation();
+MckeemanNode mckeeman_item(MckeemanNode item);
+MckeemanNode mckeeman_item(const std::string& s);
+MckeemanNode mckeeman_items(MckeemanNode first_item);
+MckeemanNode mckeeman_letter(char);
+MckeemanNode mckeeman_name(const std::string&);
+MckeemanNode mckeeman_newline();
+MckeemanNode mckeeman_nothing(bool does_accept_nothing);
+MckeemanNode mckeeman_range(char lb, char ub);
+MckeemanNode mckeeman_rule(const std::string& name, bool does_accept_nothing, std::vector<MckeemanNode> alternatives);
+MckeemanNode mckeeman_rules(std::vector<MckeemanNode> rules);
+MckeemanNode mckeeman_singleton(char symbol);
+MckeemanNode mckeeman_space();
 
 ////////////////////////////////////////////////////////////////////////////////
 
-MckeemanRule mckeeman_alternative(const std::vector<MckeemanRule>& items) {
-	auto r = MckeemanRule();
-	r.rule_ = "alternative";
-	r.alternatives_ = {
-		MckeemanAlternative{{
-			mckeeman_indentation(),
-			mckeeman_items(items),
-			mckeeman_newline()
-		}}
-	};
+// Grammar.
+
+MckeemanNode mckeeman_grammar() {
+	auto rules = std::vector<MckeemanNode>();
+	rules.push_back(mckeeman_rule_of(mckeeman_grammar_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_space_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_newline_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_name_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_letter_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_indentation_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_rules_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_rule_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_nothing_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_alternatives_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_alternative_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_items_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_item_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_literal_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_singleton_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_codepoint_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_hexcode_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_hex_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_range_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_exclude_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_characters_rule()));
+	rules.push_back(mckeeman_rule_of(mckeeman_character_rule()));
+	return mckeeman_grammar(std::move(rules));
+}
+
+// Rule.
+
+
+
+// Generalization.
+
+
+
+// Instance.
+
+MckeemanNode mckeeman_alternative(MckeemanNode alternative) {
+	auto r = MckeemanNode();
+	*name(r) = "alternative";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(mckeeman_indentation());
+	items.push_back(mckeeman_items(std::move(alternative)));
+	items.push_back(mckeeman_newline());
+	create_alternative(r, std::move(items));
 	return r;
 }
 
-MckeemanRule mckeeman_alternatives(const std::vector<MckeemanAlternative>& as) {
+MckeemanNode mckeeman_alternatives(std::vector<MckeemanNode> alternatives) {
 	// assert(size(as) > 0);
-	auto r = MckeemanRule();
-	r.rule_ = "alternatives";
-	if(size(as) == 1) {
-		r.alternatives_ = {
-			MckeemanAlternative{{
-				mckeeman_alternative(as[0].items_)
-			}}
-		};
-	} else if(size(as) > 1) {
-		r.alternatives_ = {
-			MckeemanAlternative{{
-				mckeeman_alternative(as[0].items_),
-				mckeeman_alternatives(popped_front(as))
-			}}
-		};
+	auto r = MckeemanNode();
+	*name(r) = "alternatives";
+	if(size(alternatives) == 1) {
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_alternative(std::move(alternatives[0])));
+		create_alternative(r, std::move(items));
+	} else if(size(alternatives) > 1) {
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_alternative(std::move(alternatives[0])));
+		items.push_back(mckeeman_alternatives(popped_front(std::move(alternatives))));
+		create_alternative(r, std::move(items));
 	}
 	return r;
 }
 
-MckeemanRule mckeeman_codepoint(char c) {
+MckeemanNode mckeeman_codepoint(char c) {
     // Missing second alternative.
-	auto r = MckeemanRule();
-	r.rule_ = "codepoint";
-	r.data_ = std::string(1, c);
+	auto r = MckeemanNode();
+	*name(r) = "codepoint";
+	*literal(r) = std::string(1, c);
 	return r;
 }
 
-MckeemanRule mckeeman_grammar(const std::vector<MckeemanRule>& rules) {
-	auto ret = MckeemanRule();
-	ret.rule_ = "grammar";
-	ret.alternatives_ = {
-		MckeemanAlternative{{
-			mckeeman_rules(rules)
-		}}
-	};
+MckeemanNode mckeeman_grammar(std::vector<MckeemanNode> rules) {
+	auto ret = MckeemanNode();
+	*name(ret) = "grammar";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(mckeeman_rules(std::move(rules)));
+	create_alternative(ret, std::move(items));
 	return ret;
 }
 
-MckeemanRule mckeeman_indentation() {
-    auto r =  MckeemanRule();
-	r.rule_ = "indentation";
-    r.alternatives_ = {
-		MckeemanAlternative{{
-			mckeeman_space(),
-			mckeeman_space(),
-			mckeeman_space(),
-			mckeeman_space()
-		}}
-    };
+MckeemanNode mckeeman_indentation() {
+    auto r =  MckeemanNode();
+	*name(r) = "indentation";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(mckeeman_space());
+	items.push_back(mckeeman_space());
+	items.push_back(mckeeman_space());
+	items.push_back(mckeeman_space());
+	create_alternative(r, std::move(items));
 	return r;
 }
 
-MckeemanRule mckeeman_item(const MckeemanRule& item) {
-	auto r = MckeemanRule();
-	r.rule_ = "item";
-	r.alternatives_ = {
-		MckeemanAlternative{{
-			item
-		}}
-	};
+MckeemanNode mckeeman_item(MckeemanNode item) {
+	auto r = MckeemanNode();
+	*name(r) = "item";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(std::move(item));
+	create_alternative(r, std::move(items));
 	return r;
 }
 
-MckeemanRule mckeeman_items(const std::vector<MckeemanRule>& items) {
-	assert(size(items) > 0);
-	auto r = MckeemanRule();
-	r.rule_ = "items";
-	if(size(items) == 1) {
-		r.alternatives_ = {
-			MckeemanAlternative{{
-				mckeeman_item(items[0])
-			}}
-		};
-	} else if(size(items) > 1) {
-		r.alternatives_ = {
-			MckeemanAlternative{{
-				mckeeman_item(items[0]),
-				mckeeman_space(),
-				mckeeman_items(popped_front(items))
-			}}
-		};
-	}
+MckeemanNode mckeeman_item(const std::string& s) {
+	auto r = MckeemanNode();
+	*name(r) = s;
 	return r;
 }
 
-MckeemanRule mckeeman_letter(char c) {
-	auto r = MckeemanRule();
-	r.rule_ = "letter";
-	r.data_ = std::string(1, c);
-	return r;
-}
-
-MckeemanRule mckeeman_name(const std::string& s) {
-    assert(size(s) > 0);
-	auto r = MckeemanRule();
-	r.rule_ = "name";
-	if constexpr(false) {
-		if(size(s) == 1) {
-			r.alternatives_ = {
-				MckeemanAlternative{{
-					mckeeman_letter(s[0])
-				}}
-			};
-		} else {
-			r.alternatives_ = {
-				MckeemanAlternative{{
-					mckeeman_letter(s[0]),
-					mckeeman_name(s.substr(1))
-				}}
-			};
-		}
+MckeemanNode mckeeman_items(MckeemanNode first_item) {
+	auto r = MckeemanNode();
+	*name(r) = "items";
+	if(!has_next_item(first_item)) {
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_item(std::move(first_item)));
+		create_alternative(r, std::move(items));
 	} else {
-		r.data_ = s;
+		auto tail = next_item(first_item);
+		first_item.next_item_ = nullptr;
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_item(std::move(first_item)));
+		items.push_back(mckeeman_space());
+		items.push_back(mckeeman_items(std::move(*tail)));
+		create_alternative(r, std::move(items));
 	}
 	return r;
 }
 
-MckeemanRule mckeeman_newline() {
-	auto r = MckeemanRule();
-	r.rule_ = "newline";
-	r.data_ = "\n";
+MckeemanNode mckeeman_letter(char c) {
+	auto r = MckeemanNode();
+	*name(r) = "letter";
+	*literal(r) = std::string(1, c);
 	return r;
 }
 
-MckeemanRule mckeeman_nothing(
+MckeemanNode mckeeman_name(const std::string& s) {
+    assert(size(s) > 0);
+	auto r = MckeemanNode();
+	*name(r) = "name";
+	*literal(r) = s;
+	return r;
+}
+
+MckeemanNode mckeeman_newline() {
+	auto r = MckeemanNode();
+	*name(r) = "newline";
+	*literal(r) = "\n";
+	return r;
+}
+
+MckeemanNode mckeeman_nothing(
     bool does_accept_nothing)
 {
-	auto r = MckeemanRule();
-	r.rule_ = "nothing";
+	auto r = MckeemanNode();
+	*name(r) = "nothing";
     if(does_accept_nothing) {
-		r.alternatives_ = {{{
-		   mckeeman_indentation(),
-		   mckeeman_singleton('"'),
-		   mckeeman_singleton('"'),
-		   mckeeman_newline()
-	   }}};
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_indentation());
+		items.push_back(mckeeman_singleton('"'));
+		items.push_back(mckeeman_singleton('"'));
+		items.push_back(mckeeman_newline());
+		create_alternative(r, std::move(items));
     }
 	return r;
 }
 
-MckeemanRule mckeeman_range(char lb, char ub) {
-	auto r = MckeemanRule();
-	r.rule_ = "range";
-	r.alternatives_ = {
-		MckeemanAlternative{{
-			mckeeman_singleton(lb),
-			mckeeman_space(),
-			mckeeman_singleton('.'),
-			mckeeman_space(),
-			mckeeman_singleton(ub)
-		}}
-	};
+MckeemanNode mckeeman_range(char lb, char ub) {
+	auto r = MckeemanNode();
+	*name(r) = "range";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(mckeeman_singleton(lb));
+	items.push_back(mckeeman_space());
+	items.push_back(mckeeman_singleton('.'));
+	items.push_back(mckeeman_space());
+	items.push_back(mckeeman_singleton(ub));
+	create_alternative(r, std::move(items));
 	return r;
 }
 
-MckeemanRule mckeeman_rule(const MckeemanRule& r)
+MckeemanNode mckeeman_rule(MckeemanNode r)
 {
 	return r;
 }
 
-MckeemanRule mckeeman_rules(const std::vector<MckeemanRule>& rules) {
+MckeemanNode mckeeman_rules(std::vector<MckeemanNode> rules) {
 	assert(size(rules) > 0);
-	auto r = MckeemanRule();
-	r.rule_ = "rules";
+	auto r = MckeemanNode();
+	*name(r) = "rules";
 	if(size(rules) == 1) {
-		r.alternatives_ = {
-			MckeemanAlternative{{
-				mckeeman_rule(rules[0])
-			}}
-		};
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_rule(std::move(rules[0])));
+		create_alternative(r, std::move(items));
 	} else if(size(rules) > 1) {
-		r.alternatives_ = {{{
-			mckeeman_rule(rules[0]),
-			mckeeman_rules(popped_front(rules))
-		}}};
+		auto items = std::vector<MckeemanNode>();
+		items.push_back(mckeeman_rule(std::move(rules[0])));
+		items.push_back(mckeeman_rules(popped_front(std::move(rules))));
+		create_alternative(r, std::move(items));
 	}
 	return r;
 }
 
-MckeemanRule mckeeman_singleton(
+MckeemanNode mckeeman_singleton(
     char codepoint)
 {
-	auto r = MckeemanRule();
-	r.rule_ = "singleton";
-	r.alternatives_ = {
-		MckeemanAlternative{{
-			mckeeman_codepoint('\''),
-			mckeeman_codepoint(codepoint),
-			mckeeman_codepoint('\'')
-		}}
-	};
+	auto r = MckeemanNode();
+	*name(r) = "singleton";
+	auto items = std::vector<MckeemanNode>();
+	items.push_back(mckeeman_codepoint('\''));
+	items.push_back(mckeeman_codepoint(codepoint));
+	items.push_back(mckeeman_codepoint('\''));
+	create_alternative(r, std::move(items));
 	return r;
 }
 
-MckeemanRule mckeeman_space() {
-	auto r = MckeemanRule();
-	r.rule_ = "space";
-	r.data_ = " ";
+MckeemanNode mckeeman_space() {
+	auto r = MckeemanNode();
+	*name(r) = "space";
+	*literal(r) = " ";
 	return r;
 }
 

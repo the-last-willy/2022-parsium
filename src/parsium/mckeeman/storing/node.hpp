@@ -1,9 +1,11 @@
 #pragma once
 
 #include "parsium/common/breakpoint.hpp"
+#include "parsium/common/pointer.hpp"
 
 #include <cassert>
 #include <memory>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -18,7 +20,14 @@ public:
 	std::unique_ptr<StorageNode> child_;
 	std::unique_ptr<StorageNode> sibling_;
 	StorageNode* parent_ = nullptr;
+
+	explicit StorageNode(std::string name = "", std::string literal = "")
+	: name_(std::move(name))
+	, literal_(std::move(literal))
+	{}
 };
+
+using StorageNodeHandle = std::unique_ptr<StorageNode>;
 
 bool has_child(const StorageNode& n) {
 	return n.child_ != nullptr;
@@ -97,9 +106,21 @@ bool is_alternative(const StorageNode& n) {
 }
 
 StorageNode* add_child(StorageNode& n, std::unique_ptr<StorageNode>&& child) {
+	assert(child != nullptr);
 	assert(n.child_ == nullptr);
 	n.child_ = std::move(child);
 	n.child_->parent_ = &n;
+	if(has_sibling(*n.child_)) {
+		auto it = sibling(*n.child_);
+		while(true) {
+			it->parent_ = &n;
+			if(has_sibling(*it)) {
+				it = sibling(*it);
+			} else {
+				break;
+			}
+		}
+	}
 	return n.child_.get();
 }
 
@@ -108,6 +129,49 @@ StorageNode* add_sibling(StorageNode& n, std::unique_ptr<StorageNode>&& item) {
 	n.sibling_ = std::move(item);
 	n.sibling_->parent_ = n.parent_;
 	return n.sibling_.get();
+}
+
+auto link_as_alternatives(std::vector<std::unique_ptr<StorageNode>> nodes) -> std::unique_ptr<StorageNode> {
+	auto ret = std::unique_ptr<StorageNode>();
+	auto i = std::size_t(0);
+	for(; i < size(nodes); ++i) {
+		auto& node = nodes[i];
+		if(node != nullptr) {
+			ret = std::make_unique<StorageNode>();
+			add_child(*ret, std::move(node));
+			break;
+		}
+	}
+	auto it = ret.get();
+	for(; i < size(nodes); ++i) {
+		auto& node = nodes[i];
+		if(node != nullptr) {
+			ret = std::make_unique<StorageNode>();
+			add_child(*ret, std::move(node));
+			it = add_sibling(*it, std::move(node));
+		}
+	}
+	return ret;
+}
+
+auto link_as_siblings(std::vector<std::unique_ptr<StorageNode>> nodes) -> std::unique_ptr<StorageNode> {
+	auto ret = std::unique_ptr<StorageNode>();
+	auto i = std::size_t(0);
+	for(; i < size(nodes); ++i) {
+		auto& node = nodes[i];
+		if(node != nullptr) {
+			ret = std::move(node);
+			break;
+		}
+	}
+	auto it = ret.get();
+	for(; i < size(nodes); ++i) {
+		auto& node = nodes[i];
+		if(node != nullptr) {
+			it = add_sibling(*it, std::move(node));
+		}
+	}
+	return ret;
 }
 
 }

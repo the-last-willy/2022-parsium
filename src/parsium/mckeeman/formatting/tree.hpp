@@ -1,36 +1,11 @@
 #pragma once
 
 #include "parsium/mckeeman_node.hpp"
-#include "parsium/mckeeman_tree.hpp"
 
 #include <sstream>
 #include <string>
 
 namespace parsium {
-
-std::string escaped(std::string s) {
-	auto ret = std::string();
-	for(auto c : s) {
-		switch(c) {
-			case '"': {
-				ret += "\\\"";
-				break;
-			}
-			case '\n': {
-				ret += "\\n";
-				break;
-			}
-			case '\r': {
-				ret += "\\r";
-				break;
-			}
-			default: {
-				ret += c;
-			}
-		}
-	}
-	return ret;
-}
 
 class TreeFormatter {
 public:
@@ -60,31 +35,31 @@ public:
 		}
     }
 };
-
-void format(TreeFormatter& f, const MckeemanRule& r) {
-    f.string_ << f.indentation_ << "\"" << r.rule_ << "\"";
-    if(!r.data_.empty()) {
-        f.string_ << " = \"" << escaped(r.data_) << "\"";
-    }
-    f.string_ << "\n";
-    f.indent();
-    for(int ai = 0; ai < size(r.alternatives_); ++ai) {
-        auto& alternative = r.alternatives_[ai];
-        if(size(r.alternatives_) > 1) {
-            f.string_ << f.indentation_ << "ALT " << ai << "\n";
-            f.indent();
-        }
-        for(int ii = 0; ii < size(alternative.items_); ++ii) {
-            auto& item = alternative.items_[ii];
-            format(f, item);
-        }
-        if(size(r.alternatives_) > 1) {
-            f.unindent();
-        }
-    }
-    f.unindent();
-}
-
+//
+//void format(TreeFormatter& f, const MckeemanRule& r) {
+//    f.string_ << f.indentation_ << "\"" << r.rule_ << "\"";
+//    if(!r.data_.empty()) {
+//        f.string_ << " = \"" << escaped(r.data_) << "\"";
+//    }
+//    f.string_ << "\n";
+//    f.indent();
+//    for(int ai = 0; ai < size(r.alternatives_); ++ai) {
+//        auto& alternative = r.alternatives_[ai];
+//        if(size(r.alternatives_) > 1) {
+//            f.string_ << f.indentation_ << "ALT " << ai << "\n";
+//            f.indent();
+//        }
+//        for(int ii = 0; ii < size(alternative.items_); ++ii) {
+//            auto& item = alternative.items_[ii];
+//            format(f, item);
+//        }
+//        if(size(r.alternatives_) > 1) {
+//            f.unindent();
+//        }
+//    }
+//    f.unindent();
+//}
+//
 
 void format(TreeFormatter&, const MckeemanNode&);
 void format_item(TreeFormatter&, const MckeemanNode&);
@@ -119,7 +94,7 @@ void format_item(TreeFormatter& f, const MckeemanNode& n) {
 
 inline
 void format(TreeFormatter& f, const MckeemanNode& n) {
-	for(auto item = &n; item != nullptr; item = next(*item, 0)) {
+	for(auto item = &n; item != nullptr; item = next_item(*item)) {
 		format_item(f, *item);
 	}
 }
