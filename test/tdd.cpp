@@ -67,11 +67,59 @@ auto does_accept(const Range& r, int, char c) -> bool {
 	return does_contain(r, c);
 }
 
+class Exclude {
+public:
+	char symbol = 0;
+
+	Exclude(char s)
+	: symbol(s)
+	{}
+};
+
+class RangeExclude {
+public:
+	Range range;
+	std::vector<Exclude> excludes;
+
+	RangeExclude() = default;
+
+	RangeExclude(Range r)
+	: range(std::move(r))
+	{}
+
+	RangeExclude(Range r, std::vector<Exclude> excludes)
+	: range(std::move(r))
+	, excludes(std::move(excludes))
+	{}
+};
+
+auto does_contain(const RangeExclude& re, char c) -> bool {
+	auto does_range = does_contain(re.range, c);
+	if(!does_range) {
+		return false;
+	} else {
+		auto does_excludes = true;
+		for(auto& e : re.excludes) {
+			if(e.symbol == c) {
+				does_excludes = false;
+				break;
+			}
+		}
+		return does_excludes;
+	}
+}
+
+auto does_accept(const RangeExclude& re, int, char c) -> bool {
+	return does_contain(re, c);
+}
+
 class Literal {
 public:
-	std::variant<std::monostate, Characters, Codepoint, Range> content_;
+	using Variant = std::variant<std::monostate, Characters, Codepoint, Range, RangeExclude>;
 
-	explicit Literal(std::variant<std::monostate, Characters, Codepoint, Range> content)
+	Variant content_;
+
+	explicit Literal(Variant content)
 	: content_(std::move(content))
 	{}
 };
@@ -285,6 +333,22 @@ auto parse_range(ParsingContext& c, const Range& r) -> ParsingStatus {
 	}
 }
 
+auto parse_range_exclude(ParsingContext& c, const RangeExclude& re) -> ParsingStatus {
+	while(true) {
+		auto received = c.input_->peek();
+		if(received == EOF) {
+			return ParsingStatus::rejected;
+		} else {
+			if(does_contain(re, received)) {
+				c.input_->get();
+				return ParsingStatus::accepted;
+			} else {
+				return ParsingStatus::rejected;
+			}
+		}
+	}
+}
+
 auto parse_singleton(ParsingContext& c, const Codepoint& s) -> ParsingStatus {
 	while(true) {
 		auto received = c.input_->peek();
@@ -316,6 +380,8 @@ auto parse_literal(ParsingContext& c, const Literal& l) -> ParsingStatus {
 		return result;
 	} else if(auto range = get_if<Range>(&l.content_)) {
 		return parse_range(c, *range);
+	} else if(auto range_exclude = get_if<RangeExclude>(&l.content_)) {
+		return parse_range_exclude(c, *range_exclude);
 	} else if(auto singleton = get_if<Codepoint>(&l.content_)) {
 		return parse_singleton(c, *singleton);
 	} else {
@@ -417,6 +483,17 @@ void parse(Parser& p, std::istream& is) {
 	parse(context);
 }
 
+auto character_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "character";
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Literal(RangeExclude(Range(' ', 127), std::vector<Exclude>({Exclude('\"')})))));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	return rule;
+}
+
 auto codepoint_rule() -> Rule {
 	auto rule = Rule();
 	rule.name = "codepoint";
@@ -516,16 +593,33 @@ auto newline_rule() -> Rule {
 	return rule;
 };
 
+auto range_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "range";
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("singleton")));
+		items.push_back(Item(Name("space")));
+		items.push_back(Item(Literal(Codepoint('.'))));
+		items.push_back(Item(Name("space")));
+		items.push_back(Item(Name("singleton")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	return rule;
+};
+
 auto mckeeman_grammar() -> Grammar {
 	auto grammar = Grammar();
 	auto add_rule = [&grammar](Rule&& r) {
 		grammar.named_rules_.insert({r.name, std::move(r)});
 	};
+	add_rule(character_rule());
 	add_rule(codepoint_rule());
 	add_rule(indentation_rule());
 	add_rule(letter_rule());
 	add_rule(name_rule());
 	add_rule(newline_rule());
+	add_rule(range_rule());
 	add_rule(singleton_rule());
 	add_rule(space_rule());
 	return grammar;
@@ -539,10 +633,38 @@ TEST_CASE("McKeeman Form validation") {
 	auto parser = Parser();
 	parser.grammar = &grammar;
 
+	SECTION("Character rule") {
+		parser.initial_rule_ = rule(grammar, Name("character"));
+		init(parser);
+		SECTION("Accepting \" \"") {
+			auto ss = std::stringstream(" ");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"!\"") {
+			auto ss = std::stringstream("!");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"#\"") {
+			auto ss = std::stringstream("#");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"~\"") {
+			auto ss = std::stringstream("~");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Rejecting \"\"\"") {
+			auto ss = std::stringstream("\"");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+	}
 	SECTION("Codepoint rule") {
 		parser.initial_rule_ = rule(grammar, Name("codepoint"));
 		init(parser);
-
 		SECTION("Accepting \" \"") {
 			auto ss = std::stringstream(" ");
 			parse(parser, ss);
@@ -557,7 +679,6 @@ TEST_CASE("McKeeman Form validation") {
 	SECTION("Name rule") {
 		parser.initial_rule_ = rule(grammar, Name("name"));
 		init(parser);
-
 		SECTION("Accepting \"\"") {
 			auto ss = std::stringstream("");
 			parse(parser, ss);
@@ -587,7 +708,6 @@ TEST_CASE("McKeeman Form validation") {
 	SECTION("Indentation rule") {
 		parser.initial_rule_ = rule(grammar, Name("indentation"));
 		init(parser);
-
 		SECTION("Accepting \"    \"") {
 			auto ss = std::stringstream("    ");
 			parse(parser, ss);
@@ -607,7 +727,6 @@ TEST_CASE("McKeeman Form validation") {
 	SECTION("Letter rule") {
 		parser.initial_rule_ = rule(grammar, Name("letter"));
 		init(parser);
-
 		SECTION("Accepting \"A\"") {
 			auto ss = std::stringstream("A");
 			parse(parser, ss);
@@ -659,14 +778,67 @@ TEST_CASE("McKeeman Form validation") {
 			REQUIRE(!is_accepting(parser));
 		}
 	}
+	SECTION("Range rule") {
+		parser.initial_rule_ = rule(grammar, Name("range"));
+		init(parser);
+		SECTION("Accepting \"'a' . 'z'\"") {
+			auto ss = std::stringstream("'a' . 'z'");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Rejecting \" . 'z'\"") {
+			auto ss = std::stringstream(" . 'z'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"'a'. 'z'\"") {
+			auto ss = std::stringstream("'a'. 'z'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"'a'  'z'\"") {
+			auto ss = std::stringstream("'a'  'z'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"'a' .'z'\"") {
+			auto ss = std::stringstream("'a' .'z'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"'a' . \"") {
+			auto ss = std::stringstream("'a' . ");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+	}
 	SECTION("Singleton rule") {
 		parser.initial_rule_ = rule(grammar, Name("singleton"));
 		init(parser);
-
+		SECTION("Accepting \"\'a\'\"") {
+			auto ss = std::stringstream("\'a\'");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
 		SECTION("Accepting \"\'\'\'\"") {
 			auto ss = std::stringstream("\'\'\'");
 			parse(parser, ss);
 			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Rejecting \"\'aa\'\"") {
+			auto ss = std::stringstream("\'aa\'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"\'\"") {
+			auto ss = std::stringstream("\'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+		SECTION("Rejecting \"\'\'\"") {
+			auto ss = std::stringstream("\'\'");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
 		}
 	}
 	SECTION("Space rule") {
