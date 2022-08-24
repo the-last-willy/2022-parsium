@@ -470,10 +470,9 @@ auto parse_rule(ParsingContext& c, const Rule& r) -> ParsingStatus {
 auto parse(ParsingContext& c) -> ParsingStatus {
 	c.parser->status = parse_rule(c, *c.parser->initial_rule_);
 	if(c.input_->peek() != EOF) {
-		return c.parser->status = ParsingStatus::rejected;
-	} else {
-		return c.parser->status;
+		c.parser->status = ParsingStatus::rejected;
 	}
+	return c.parser->status;
 }
 
 void parse(Parser& p, std::istream& is) {
@@ -491,6 +490,25 @@ auto character_rule() -> Rule {
 		items.push_back(Item(Literal(RangeExclude(Range(' ', 127), std::vector<Exclude>({Exclude('\"')})))));
 		rule.alternatives_.push_back(Alternative(std::move(items)));
 	}
+	return rule;
+}
+
+auto characters_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "characters";
+	// Quick fix.
+	rule.does_accept_nothing = true;
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("character")));
+		items.push_back(Item(Name("characters")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+//	{
+//		auto items = std::vector<Item>();
+//		items.push_back(Item(Name("character")));
+//		rule.alternatives_.push_back(Alternative(std::move(items)));
+//	}
 	return rule;
 }
 
@@ -542,19 +560,20 @@ auto letter_rule() -> Rule {
 
 auto name_rule() -> Rule {
 	auto rule = Rule();
-	rule.does_accept_nothing = true;
 	rule.name = "name";
+	// Quickfix.
+	rule.does_accept_nothing = true;
 	{
 		auto alternative = Alternative();
 		alternative.items_.push_back(Item(Name("letter")));
 		alternative.items_.push_back(Item(Name("name")));
 		rule.alternatives_.push_back(std::move(alternative));
 	}
-	{
-		auto alternative = Alternative();
-		alternative.items_.push_back(Item(Name("letter")));
-		rule.alternatives_.push_back(std::move(alternative));
-	}
+//	{
+//		auto alternative = Alternative();
+//		alternative.items_.push_back(Item(Name("letter")));
+//		rule.alternatives_.push_back(std::move(alternative));
+//	}
 	return rule;
 }
 
@@ -614,6 +633,7 @@ auto mckeeman_grammar() -> Grammar {
 		grammar.named_rules_.insert({r.name, std::move(r)});
 	};
 	add_rule(character_rule());
+	add_rule(characters_rule());
 	add_rule(codepoint_rule());
 	add_rule(indentation_rule());
 	add_rule(letter_rule());
@@ -658,6 +678,25 @@ TEST_CASE("McKeeman Form validation") {
 		}
 		SECTION("Rejecting \"\"\"") {
 			auto ss = std::stringstream("\"");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+	}
+	SECTION("Characters rule") {
+		parser.initial_rule_ = rule(grammar, Name("characters"));
+		init(parser);
+		SECTION("Accepting \"a\"") {
+			auto ss = std::stringstream("a");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \" !#~\"") {
+			auto ss = std::stringstream(" !#~");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Rejecting \"a\"\"") {
+			auto ss = std::stringstream("a\"");
 			parse(parser, ss);
 			REQUIRE(!is_accepting(parser));
 		}
