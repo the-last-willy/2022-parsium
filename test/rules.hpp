@@ -102,6 +102,31 @@ auto letter_rule() -> Rule {
 	return rule;
 }
 
+auto literal_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "literal";
+	// Order is messed up here.
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("range")));
+		items.push_back(Item(Name("exclude")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("singleton")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Literal(Codepoint('\"'))));
+		items.push_back(Item(Name("characters")));
+		items.push_back(Item(Literal(Codepoint('\"'))));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	return rule;
+}
+
 auto name_rule() -> Rule {
 	auto rule = Rule();
 	rule.name = "name";
@@ -181,6 +206,7 @@ auto mckeeman_grammar() -> Grammar {
 	add_rule(exclude_rule());
 	add_rule(indentation_rule());
 	add_rule(letter_rule());
+	add_rule(literal_rule());
 	add_rule(name_rule());
 	add_rule(newline_rule());
 	add_rule(range_rule());

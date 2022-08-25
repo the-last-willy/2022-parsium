@@ -110,30 +110,6 @@ TEST_CASE("McKeeman Form validation") {
 			REQUIRE(!is_accepting(parser));
 		}
 	}
-	SECTION("Name rule") {
-		parser.initial_rule_ = rule(grammar, Name("name"));
-		init(parser);
-		SECTION("Accepting \"a\"") {
-			auto ss = InputStream("a");
-			parse(parser, ss);
-			REQUIRE(is_accepting(parser));
-		}
-		SECTION("Accepting \"ab\"") {
-			auto ss = InputStream("ab");
-			parse(parser, ss);
-			REQUIRE(is_accepting(parser));
-		}
-		SECTION("Accepting \"azAZ_\"") {
-			auto ss = InputStream("azAZ_");
-			parse(parser, ss);
-			REQUIRE(is_accepting(parser));
-		}
-		SECTION("Rejecting \"a@\"") {
-			auto ss = InputStream("a@");
-			parse(parser, ss);
-			REQUIRE(!is_accepting(parser));
-		}
-	}
 	SECTION("Indentation rule") {
 		parser.initial_rule_ = rule(grammar, Name("indentation"));
 		init(parser);
@@ -203,6 +179,54 @@ TEST_CASE("McKeeman Form validation") {
 		}
 		SECTION("Rejecting \"{\"") {
 			auto ss = InputStream("{");
+			parse(parser, ss);
+			REQUIRE(!is_accepting(parser));
+		}
+	}
+	SECTION("Literal rule") {
+		parser.initial_rule_ = rule(grammar, Name("literal"));
+		init(parser);
+		SECTION("Accepting \"'a'\"") {
+			auto ss = InputStream("'a'");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"'a' . 'z'\"") {
+			auto ss = InputStream("'a' . 'z'");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"'a' . 'z' - 'b'\"") {
+			auto ss = InputStream("'a' . 'z' - 'b'");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"\"abc\"\"") {
+			auto ss = InputStream("\"abc\"");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+	}
+	SECTION("Name rule") {
+		parser.initial_rule_ = rule(grammar, Name("name"));
+		init(parser);
+		SECTION("Accepting \"a\"") {
+			auto ss = InputStream("a");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"ab\"") {
+			auto ss = InputStream("ab");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"azAZ_\"") {
+			auto ss = InputStream("azAZ_");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Rejecting \"a@\"") {
+			auto ss = InputStream("a@");
 			parse(parser, ss);
 			REQUIRE(!is_accepting(parser));
 		}
