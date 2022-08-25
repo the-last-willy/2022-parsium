@@ -1,7 +1,7 @@
 // No inclusion guard.
 
 #if(defined(_MSC_VER))
-	#define FORCE_INLINE __force_inline
+	#define ALWAYS_INLINED __forceinline
 #else
-	#define FORCE_INLINE
+	#define ALWAYS_INLINED
 #endif

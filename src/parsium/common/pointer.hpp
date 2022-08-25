@@ -1,5 +1,7 @@
 #pragma once
 
+#include <parsium/common/compiler/inlining_prologue.hpp>
+
 namespace parsium {
 
 /**
@@ -21,14 +23,17 @@ public:
 		return *this;
 	}
 
+	ALWAYS_INLINED
 	operator T*() const {
 		return ptr_;
 	}
 
+	ALWAYS_INLINED
 	auto operator->() const -> const T* {
 		return ptr_;
 	}
 
+	ALWAYS_INLINED
 	auto operator->() -> T* {
 		return ptr_;
 	}
@@ -55,20 +60,22 @@ public:
 		return *this;
 	}
 
-	__forceinline
+	ALWAYS_INLINED
 	operator T*() const {
 		return ptr_;
 	}
 
-	__forceinline
+	ALWAYS_INLINED
 	auto operator->() const -> const T* {
 		return ptr_;
 	}
 
-	__forceinline
+	ALWAYS_INLINED
 	auto operator->() -> T* {
 		return ptr_;
 	}
 };
 
 }
+
+#include <parsium/common/compiler/inlining_epilogue.hpp>

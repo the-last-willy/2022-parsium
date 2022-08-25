@@ -1,3 +1,3 @@
 // No inclusion guard.
 
-#undef FORCE_INLINE
+#undef ALWAYS_INLINED
