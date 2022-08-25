@@ -5,7 +5,7 @@ project(parsium)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 if(MSVC)
-	add_compile_options(/W3 /std:c++20)
+	add_compile_options(/W3 /std:c++20 /Ob1)
 else() # Clang, GCC
 	add_compile_options(-Wall -std=c++20)
 endif()
