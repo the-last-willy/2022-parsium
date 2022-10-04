@@ -129,6 +129,44 @@ TEST_CASE("McKeeman Form validation") {
 			REQUIRE(!is_accepting(parser));
 		}
 	}
+	SECTION("Item rule") {
+		parser.initial_rule_ = rule(grammar, Name("item"));
+		init(parser);
+		SECTION("Accepting \"name\"") {
+			auto ss = InputStream("name");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"\"literal\"\"") {
+			auto ss = InputStream("\"literal\"");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+	}
+	SECTION("Items rule") {
+		parser.initial_rule_ = rule(grammar, Name("items"));
+		init(parser);
+		SECTION("Accepting \"\"literal_a\"\"") {
+			auto ss = InputStream("\"literal_a\"");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"\"literal_a\" name_b\"") {
+			auto ss = InputStream("\"literal_a\" name_b");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"name_a\"") {
+			auto ss = InputStream("name_a");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+		SECTION("Accepting \"name_a \"literal_b\"\"") {
+			auto ss = InputStream("name_a \"literal_b\"");
+			parse(parser, ss);
+			REQUIRE(is_accepting(parser));
+		}
+	}
 	SECTION("Letter rule") {
 		parser.initial_rule_ = rule(grammar, Name("letter"));
 		init(parser);

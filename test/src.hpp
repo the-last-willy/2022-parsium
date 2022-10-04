@@ -491,11 +491,15 @@ auto parse_rule(ParsingContext& c, const Rule& r) -> ParsingStatus {
 }
 
 auto parse(ParsingContext& c) -> ParsingStatus {
-	c.parser->status = parse_rule(c, *c.parser->initial_rule_);
-	assert(c.parser->stack.empty());
-	auto p = c.input->peek();
-	if(p != EOF) {
+	if(c.parser->initial_rule_ == nullptr) {
 		c.parser->status = ParsingStatus::rejected;
+	} else {
+		c.parser->status = parse_rule(c, *c.parser->initial_rule_);
+		assert(c.parser->stack.empty());
+		auto p = c.input->peek();
+		if(p != EOF) {
+			c.parser->status = ParsingStatus::rejected;
+		}
 	}
 	return c.parser->status;
 }

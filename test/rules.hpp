@@ -81,6 +81,41 @@ auto indentation_rule() -> Rule {
 	return rule;
 };
 
+auto item_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "item";
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("literal")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("name")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	return rule;
+};
+
+auto items_rule() -> Rule {
+	auto rule = Rule();
+	rule.name = "items";
+	// Wrong order of alternatives.
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("item")));
+		items.push_back(Item(Name("space")));
+		items.push_back(Item(Name("items")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	{
+		auto items = std::vector<Item>();
+		items.push_back(Item(Name("item")));
+		rule.alternatives_.push_back(Alternative(std::move(items)));
+	}
+	return rule;
+};
+
 auto letter_rule() -> Rule {
 	auto rule = Rule();
 	rule.name = "letter";
@@ -205,6 +240,8 @@ auto mckeeman_grammar() -> Grammar {
 	add_rule(codepoint_rule());
 	add_rule(exclude_rule());
 	add_rule(indentation_rule());
+	add_rule(item_rule());
+	add_rule(items_rule());
 	add_rule(letter_rule());
 	add_rule(literal_rule());
 	add_rule(name_rule());
